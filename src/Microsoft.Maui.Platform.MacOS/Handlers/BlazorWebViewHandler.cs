@@ -83,7 +83,14 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
 
         if (_webviewManager != null)
         {
-            _webviewManager.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            try
+            {
+                _webviewManager.DisposeAsync().AsTask().ContinueWith(_ => { });
+            }
+            catch
+            {
+                // Best-effort cleanup
+            }
             _webviewManager = null;
         }
 
