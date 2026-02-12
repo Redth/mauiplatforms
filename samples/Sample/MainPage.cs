@@ -84,7 +84,7 @@ public class MainPage : ContentPage
         };
         navButton.Clicked += async (s, e) => await Navigation.PushAsync(new CollectionViewPage());
 
-#if !TVOS
+#if MACAPP
         var blazorButton = new Button
         {
             Text = "Go to Blazor Page →",
@@ -240,9 +240,10 @@ public class MainPage : ContentPage
                     SectionHeader("Navigation"),
                     navButton,
 
-#if !TVOS
+#if MACAPP
                     blazorButton,
-
+#endif
+#if !TVOS
                     SectionHeader("Dialogs"),
                     alertButton,
                     confirmButton,

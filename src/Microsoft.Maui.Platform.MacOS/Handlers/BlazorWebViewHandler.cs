@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Platform.MacOS.Controls;
@@ -58,7 +56,6 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
 
     protected override WKWebView CreatePlatformView()
     {
-        Log("[CreatePV] called");
         var config = new WKWebViewConfiguration();
 
         config.UserContentController.AddScriptMessageHandler(
@@ -76,10 +73,8 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
 
     protected override void ConnectHandler(WKWebView platformView)
     {
-        Log("[Connect] called");
         base.ConnectHandler(platformView);
         StartWebViewCoreIfPossible();
-        Log("[Connect] done");
     }
 
     protected override void DisconnectHandler(WKWebView platformView)
@@ -100,66 +95,42 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
         _webviewManager?.MessageReceivedInternal(uri, message);
     }
 
-    static void Log(string msg)
-    {
-        var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "blazor_debug.log");
-        File.AppendAllText(logPath, msg + "\n");
-    }
-
     void StartWebViewCoreIfPossible()
     {
-        Log("[Start] called");
         if (HostPage == null || Services == null || _webviewManager != null)
-        {
-            Log($"[Start] skip: HostPage={HostPage}, Services={Services != null}, mgr={_webviewManager != null}");
             return;
-        }
 
-        try
+        var contentRootDir = Path.GetDirectoryName(HostPage!) ?? string.Empty;
+        var hostPageRelativePath = Path.GetRelativePath(contentRootDir, HostPage!);
+
+        var fileProvider = new MacOSMauiAssetFileProvider(contentRootDir);
+
+        var dispatcher = Services!.GetService<IDispatcher>()
+            ?? new Dispatching.MacOSDispatcher();
+
+        var jsComponents = new Microsoft.AspNetCore.Components.Web.JSComponentConfigurationStore();
+
+        _webviewManager = new MacOSWebViewManager(
+            PlatformView,
+            Services!,
+            new MacOSBlazorDispatcher(dispatcher),
+            fileProvider,
+            jsComponents,
+            contentRootDir,
+            hostPageRelativePath);
+
+        foreach (var rootComponent in VirtualView.RootComponents)
         {
-            var contentRootDir = Path.GetDirectoryName(HostPage!) ?? string.Empty;
-            var hostPageRelativePath = Path.GetRelativePath(contentRootDir, HostPage!);
-            Log($"[Start] contentRoot='{contentRootDir}', hostPage='{hostPageRelativePath}'");
-
-            var fileProvider = new MacOSMauiAssetFileProvider(contentRootDir);
-            var testFile = fileProvider.GetFileInfo(hostPageRelativePath);
-            Log($"[Start] hostPage exists={testFile?.Exists}, path={testFile?.PhysicalPath}");
-
-            var dispatcher = Services!.GetService<IDispatcher>()
-                ?? new Microsoft.Maui.Platform.MacOS.Dispatching.MacOSDispatcher();
-            Log($"[Start] dispatcher={dispatcher.GetType().FullName}");
-
-            var jsComponents = new Microsoft.AspNetCore.Components.Web.JSComponentConfigurationStore();
-
-            _webviewManager = new MacOSWebViewManager(
-                PlatformView,
-                Services!,
-                new MacOSBlazorDispatcher(dispatcher),
-                fileProvider,
-                jsComponents,
-                contentRootDir,
-                hostPageRelativePath);
-
-            foreach (var rootComponent in VirtualView.RootComponents)
+            if (rootComponent.ComponentType != null && rootComponent.Selector != null)
             {
-                if (rootComponent.ComponentType != null && rootComponent.Selector != null)
-                {
-                    Log($"[Start] AddRoot: {rootComponent.Selector} -> {rootComponent.ComponentType.FullName}");
-                    var parameters = rootComponent.Parameters != null
-                        ? ParameterView.FromDictionary(rootComponent.Parameters)
-                        : ParameterView.Empty;
-                    _ = _webviewManager.AddRootComponentAsync(rootComponent.ComponentType, rootComponent.Selector, parameters);
-                }
+                var parameters = rootComponent.Parameters != null
+                    ? ParameterView.FromDictionary(rootComponent.Parameters)
+                    : ParameterView.Empty;
+                _ = _webviewManager.AddRootComponentAsync(rootComponent.ComponentType, rootComponent.Selector, parameters);
             }
+        }
 
-            Log("[Start] Navigate");
-            _webviewManager.Navigate(VirtualView.StartPath);
-            Log("[Start] done");
-        }
-        catch (Exception ex)
-        {
-            Log($"[Start] ERROR: {ex}");
-        }
+        _webviewManager.Navigate(VirtualView.StartPath);
     }
 
     public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -194,14 +165,12 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
         public void StartUrlSchemeTask(WKWebView webView, IWKUrlSchemeTask urlSchemeTask)
         {
             var url = urlSchemeTask.Request.Url?.AbsoluteString;
-            Log($"[Scheme] req: {url}");
             if (string.IsNullOrEmpty(url))
                 return;
 
             try
             {
                 var responseBytes = GetResponseBytes(url, out var contentType, out var statusCode);
-                Log($"[Scheme] resp: status={statusCode}, type={contentType}, len={responseBytes.Length}");
                 using var dic = new NSMutableDictionary<NSString, NSString>();
 
                 if (statusCode == 200)
@@ -234,6 +203,7 @@ public partial class BlazorWebViewHandler : MacOSViewHandler<MacOSBlazorWebView,
         byte[] GetResponseBytes(string? url, out string contentType, out int statusCode)
         {
             var uri = new Uri(url!);
+            // Don't fall back to host page for framework/content files
             var allowFallbackOnHostPage = AppOriginUri.IsBaseOf(uri)
                 && !uri.AbsolutePath.StartsWith("/_framework/", StringComparison.Ordinal)
                 && !uri.AbsolutePath.StartsWith("/_content/", StringComparison.Ordinal);

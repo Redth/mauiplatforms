@@ -15,6 +15,7 @@
 
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
+        <DefineConstants>$(DefineConstants);TVAPP</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

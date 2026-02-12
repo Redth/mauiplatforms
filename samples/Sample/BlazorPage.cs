@@ -1,5 +1,4 @@
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
+#if MACAPP
 using Microsoft.Maui.Platform.MacOS.Controls;
 
 namespace Sample;
@@ -33,9 +32,7 @@ public class BlazorPage : ContentPage
         blazorWebView.RootComponents.Add(new BlazorRootComponent
         {
             Selector = "#app",
-#if !TVOS
             ComponentType = typeof(SampleMac.Components.Counter)
-#endif
         });
 
         Content = new VerticalStackLayout
@@ -44,3 +41,4 @@ public class BlazorPage : ContentPage
         };
     }
 }
+#endif

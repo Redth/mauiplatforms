@@ -16,6 +16,7 @@
 
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
+        <DefineConstants>$(DefineConstants);MACAPP</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
