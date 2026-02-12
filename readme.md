@@ -46,6 +46,7 @@ Both platforms share the same set of control handlers:
 | Window | UIWindow + UIViewController | NSWindow + FlippedNSView |
 | Dispatcher | GCD (DispatchQueue.MainQueue) | GCD (DispatchQueue.MainQueue) |
 | DispatcherTimer | NSTimer | NSTimer |
+| Dialogs (Alert, Confirm, Prompt) | ❌ Not supported (see below) | NSAlert |
 
 ## Handler TODO
 
@@ -61,7 +62,7 @@ Both platforms share the same set of control handlers:
 * TimePicker
 * RadioButton
 * SearchBar
-* Dialogs (Confirm, Prompt, Alert)
+* Dialogs (Confirm, Prompt, Alert) - macOS ✅, tvOS ❌ (see [Dialogs](#dialogs) below)
 
 ### Layouts
 * Grid
@@ -196,3 +197,11 @@ open samples/SampleMac/bin/Debug/net10.0-macos/osx-arm64/MAUI\ macOS.app
 * macOS NSView has no `SizeThatFits()` — the base handler uses `IntrinsicContentSize` and `FittingSize` for native controls, and a custom `SizeThatFits` method on `MacOSContainerView`.
 * `IButton` does not have `Text` or `TextColor` directly — those are on `IText` and `ITextStyle`. Handlers cast via `if (button is IText textButton)`.
 * Sample apps use pure C# pages (no XAML) to avoid XAML compilation issues on unsupported platforms.
+
+## Dialogs
+
+Dialogs (`DisplayAlertAsync`, `DisplayPromptAsync`) are supported on **macOS** via `NSAlert`, but are **not yet supported on tvOS**.
+
+MAUI's dialog system is driven by an internal `AlertManager` class that resolves an `IAlertManagerSubscription` implementation from DI. On macOS, we register a custom implementation using `DispatchProxy` to implement the internal interface via reflection. However, **tvOS uses AOT compilation which does not support dynamic code generation** — `DispatchProxy` throws `PlatformNotSupportedException` at runtime.
+
+Until `IAlertManagerSubscription` is made public in MAUI (see the [proposal](https://gist.github.com/Redth/fc07a982bcff79cf925168f241a12c95)), tvOS dialog support is blocked. The implementation is commented out in `src/Microsoft.Maui.Platform.TvOS/Platform/AlertManagerSubscription.cs` and the sample uses `#if !TVOS` compiler directives to exclude dialog UI on Apple TV.

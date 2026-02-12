@@ -33,6 +33,8 @@ public static class MauiAppBuilderExtensions
 
         builder.Services.TryAddSingleton<IDispatcher, MacOSDispatcher>();
 
+        AlertManagerSubscription.Register(builder.Services);
+
         return builder;
     }
 }

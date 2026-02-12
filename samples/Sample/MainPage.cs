@@ -10,6 +10,9 @@ public class MainPage : ContentPage
     readonly Label _statusLabel;
     readonly Label _sliderValue;
     readonly Label _pickerStatus;
+#if !TVOS
+    readonly Label _dialogResult;
+#endif
 
     public MainPage()
     {
@@ -35,6 +38,15 @@ public class MainPage : ContentPage
             FontSize = 18,
             TextColor = Colors.White,
         };
+
+#if !TVOS
+        _dialogResult = new Label
+        {
+            Text = "No dialog shown yet",
+            FontSize = 18,
+            TextColor = Color.FromArgb("#A8E6CF"),
+        };
+#endif
 
         // --- Title ---
         var title = new Label
@@ -62,6 +74,33 @@ public class MainPage : ContentPage
             TextColor = Colors.White,
         };
         button2.Clicked += OnButtonClicked;
+
+#if !TVOS
+        // --- Dialog Buttons ---
+        var alertButton = new Button
+        {
+            Text = "Show Alert",
+            BackgroundColor = Color.FromArgb("#FF6B6B"),
+            TextColor = Colors.White,
+        };
+        alertButton.Clicked += OnAlertClicked;
+
+        var confirmButton = new Button
+        {
+            Text = "Show Confirm",
+            BackgroundColor = Color.FromArgb("#FFD93D"),
+            TextColor = Colors.Black,
+        };
+        confirmButton.Clicked += OnConfirmClicked;
+
+        var promptButton = new Button
+        {
+            Text = "Show Prompt",
+            BackgroundColor = Color.FromArgb("#6BCB77"),
+            TextColor = Colors.White,
+        };
+        promptButton.Clicked += OnPromptClicked;
+#endif
 
         // --- Entry ---
         var entry = new Entry
@@ -161,6 +200,14 @@ public class MainPage : ContentPage
                     button1,
                     button2,
 
+#if !TVOS
+                    SectionHeader("Dialogs"),
+                    alertButton,
+                    confirmButton,
+                    promptButton,
+                    _dialogResult,
+#endif
+
                     SectionHeader("Entry"),
                     entry,
 
@@ -219,4 +266,27 @@ public class MainPage : ContentPage
         _sliderValue.Text = $"Value: {(int)e.NewValue}";
         _statusLabel.Text = $"Slider: {(int)e.NewValue}";
     }
+
+#if !TVOS
+    async void OnAlertClicked(object? sender, EventArgs e)
+    {
+        await DisplayAlertAsync("Alert", "This is a simple alert message.", "OK");
+        _dialogResult.Text = "Alert dismissed";
+        _statusLabel.Text = "Alert dismissed";
+    }
+
+    async void OnConfirmClicked(object? sender, EventArgs e)
+    {
+        var result = await DisplayAlertAsync("Confirm", "Do you want to proceed?", "Yes", "No");
+        _dialogResult.Text = $"Confirm result: {(result ? "Yes" : "No")}";
+        _statusLabel.Text = $"Confirm: {(result ? "Yes" : "No")}";
+    }
+
+    async void OnPromptClicked(object? sender, EventArgs e)
+    {
+        var result = await DisplayPromptAsync("Prompt", "Enter your name:", placeholder: "Type here...");
+        _dialogResult.Text = result != null ? $"Prompt result: {result}" : "Prompt cancelled";
+        _statusLabel.Text = result != null ? $"Prompt: {result}" : "Prompt cancelled";
+    }
+#endif
 }
