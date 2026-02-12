@@ -1,5 +1,9 @@
 # .NET MAUI Backends for Apple TV & macOS (AppKit)
 
+<video src="maui_macos.mp4" controls width="600" title="macOS (AppKit) Demo"></video>
+
+<video src="maui_appletv.mp4" controls width="600" title="Apple TV (tvOS) Demo"></video>
+
 Custom .NET MAUI backends targeting platforms not officially supported by MAUI — Apple TV (tvOS via UIKit) and macOS (native AppKit, not Mac Catalyst).
 
 Both backends use the platform-agnostic MAUI NuGet packages (`net10.0` fallback assemblies) and provide custom handler implementations that bridge MAUI's layout/rendering system to the native platform UI frameworks.
@@ -112,6 +116,7 @@ Both platforms share the same set of control handlers:
 ### Broader Goals
 * ~~WebView~~ — macOS ✅ (WKWebView), tvOS ❌ (not supported by platform)
 * ~~BlazorWebView~~ — macOS ✅ (custom MacOSBlazorWebView control), tvOS ❌ (no WebView support)
+* App Icons (ideally via MAUI build tools / `MauiIcon`)
 * Essentials (platform-specific API wrappers)
 * NuGet packaging
 * CI/CD pipeline
