@@ -51,7 +51,11 @@ public class MainPage : ContentPage
         // --- Title ---
         var title = new Label
         {
-            Text = "MAUI tvOS Controls",
+#if TVOS
+            Text = "MAUI tvOS Sample",
+#elif MACOS
+            Text = "MAUI macOS Sample",
+#endif
             FontSize = 44,
             FontAttributes = FontAttributes.Bold,
             TextColor = Colors.White,
