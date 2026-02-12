@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>net10.0-macos</TargetFramework>
@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.20"/>
         <ProjectReference Include="..\..\src\Microsoft.Maui.Platform.MacOS\Microsoft.Maui.Platform.MacOS.csproj"/>
     </ItemGroup>
 
@@ -33,12 +34,19 @@
         <Compile Include="..\Sample\CollectionViewPage.cs">
             <Link>CollectionViewPage.cs</Link>
         </Compile>
+        <Compile Include="..\Sample\BlazorPage.cs">
+            <Link>BlazorPage.cs</Link>
+        </Compile>
         <Compile Include="..\Sample\Platforms\macOS\Main.cs">
             <Link>Main.cs</Link>
         </Compile>
         <Compile Include="..\Sample\Platforms\macOS\MauiMacOSApp.cs">
             <Link>MauiMacOSApp.cs</Link>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <BundleResource Include="..\Sample\wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
 </Project>

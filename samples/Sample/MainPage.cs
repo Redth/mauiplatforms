@@ -85,6 +85,16 @@ public class MainPage : ContentPage
         navButton.Clicked += async (s, e) => await Navigation.PushAsync(new CollectionViewPage());
 
 #if !TVOS
+        var blazorButton = new Button
+        {
+            Text = "Go to Blazor Page →",
+            BackgroundColor = Color.FromArgb("#9B59B6"),
+            TextColor = Colors.White,
+        };
+        blazorButton.Clicked += async (s, e) => await Navigation.PushAsync(new BlazorPage());
+#endif
+
+#if !TVOS
         // --- Dialog Buttons ---
         var alertButton = new Button
         {
@@ -231,6 +241,8 @@ public class MainPage : ContentPage
                     navButton,
 
 #if !TVOS
+                    blazorButton,
+
                     SectionHeader("Dialogs"),
                     alertButton,
                     confirmButton,
@@ -255,6 +267,13 @@ public class MainPage : ContentPage
 #if !TVOS
                     SectionHeader("CheckBox"),
                     checkBox,
+
+                    SectionHeader("WebView"),
+                    new WebView
+                    {
+                        Source = new UrlWebViewSource { Url = "https://dotnet.microsoft.com" },
+                        HeightRequest = 400,
+                    },
 #endif
 
                     SectionHeader("Images"),

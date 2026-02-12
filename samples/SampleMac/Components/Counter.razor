@@ -1,0 +1,21 @@
+<h1>🔥 Blazor on macOS (AppKit)</h1>
+<p>This is a Blazor component running inside a native macOS app via BlazorWebView!</p>
+
+<div class="counter">
+    <p>Current count: @currentCount</p>
+</div>
+
+<button @onclick="IncrementCount">Click me</button>
+
+<p style="margin-top: 20px; color: #888;">
+    Platform: macOS (AppKit) via custom MAUI backend
+</p>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

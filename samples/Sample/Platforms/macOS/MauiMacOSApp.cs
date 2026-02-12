@@ -1,4 +1,5 @@
 using Foundation;
+using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.Platform.MacOS.Hosting;
 
@@ -11,6 +12,7 @@ public class MauiMacOSApp : MacOSMauiApplication
     {
         var builder = MauiApp.CreateBuilder();
         builder.UseMacOSMauiApp<App>();
+        builder.Services.AddMauiBlazorWebView();
         return builder.Build();
     }
 }
