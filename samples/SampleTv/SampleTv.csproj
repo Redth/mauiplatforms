@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0-tvos</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <Nullable>enable</Nullable>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <ApplicationTitle>MAUI tvOS</ApplicationTitle>
+        <ApplicationId>org.shiny.tvos</ApplicationId>
+        <ApplicationIdGuid>C5E91D2A-367B-4F8C-A1D3-8B4F22E5D691</ApplicationIdGuid>
+        <MauiVersion>10.0.31</MauiVersion>
+
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
+        <ProjectReference Include="..\..\src\Microsoft.Maui.Platform.tvOS\Microsoft.Maui.Platform.tvOS.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\Sample\App.cs">
+            <Link>App.cs</Link>
+        </Compile>
+        <Compile Include="..\Sample\MainPage.cs">
+            <Link>MainPage.cs</Link>
+        </Compile>
+        <Compile Include="..\Sample\Platforms\tvOS\Main.cs">
+            <Link>Main.cs</Link>
+        </Compile>
+        <Compile Include="..\Sample\Platforms\tvOS\MauiTvOSApp.cs">
+            <Link>MauiMacOSApp.cs</Link>
+        </Compile>
+        <BundleResource Include="..\Sample\Platforms\tvOS\Info.plist">
+            <Link>Info.plist</Link>
+        </BundleResource>
+    </ItemGroup>
+
+</Project>

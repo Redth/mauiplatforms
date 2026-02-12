@@ -1,0 +1,198 @@
+# .NET MAUI Backends for Apple TV & macOS (AppKit)
+
+Custom .NET MAUI backends targeting platforms not officially supported by MAUI — Apple TV (tvOS via UIKit) and macOS (native AppKit, not Mac Catalyst).
+
+Both backends use the platform-agnostic MAUI NuGet packages (`net10.0` fallback assemblies) and provide custom handler implementations that bridge MAUI's layout/rendering system to the native platform UI frameworks.
+
+## Project Structure
+
+```
+src/
+  Microsoft.Maui.Platform.TvOS/     # tvOS backend library (net10.0-tvos)
+  Microsoft.Maui.Platform.MacOS/    # macOS AppKit backend library (net10.0-macos)
+samples/
+  Sample/                           # Shared sample code (App.cs, MainPage.cs, Platforms/)
+  SampleTv/                         # tvOS sample app (links files from Sample/)
+  SampleMac/                        # macOS sample app (links files from Sample/)
+```
+
+> **Note:** There is also a `Sample/Sample.csproj` that multitargets both `net10.0-tvos` and `net10.0-macos`, but it is **not yet working**. Use `SampleTv` and `SampleMac` to build and run the individual platform samples.
+
+## Handlers Implemented
+
+Both platforms share the same set of control handlers:
+
+| Control | tvOS (UIKit) | macOS (AppKit) |
+|---------|-------------|----------------|
+| Label | UILabel | NSTextField (non-editable) |
+| Button | UIButton | NSButton |
+| Entry | UITextField | NSTextField (editable) |
+| Picker | UIButton + UIAlertController | NSPopUpButton |
+| Slider | Custom TvOSSliderView | NSSlider |
+| ActivityIndicator | UIActivityIndicatorView | NSProgressIndicator |
+| Image | UIImageView | NSImageView |
+| ScrollView | UIScrollView | NSScrollView |
+| ShapeView | UIView + CAShapeLayer | NSView + CAShapeLayer |
+| Layout (Stack, Grid, etc.) | TvOSContainerView | MacOSContainerView |
+| ContentPage | TvOSContainerView | MacOSContainerView |
+| ContentView | TvOSContainerView | MacOSContainerView |
+| BoxView | via ShapeView | via ShapeView |
+
+### Infrastructure
+
+| Component | tvOS | macOS |
+|-----------|------|-------|
+| Application | NSObject | NSObject |
+| Window | UIWindow + UIViewController | NSWindow + FlippedNSView |
+| Dispatcher | GCD (DispatchQueue.MainQueue) | GCD (DispatchQueue.MainQueue) |
+| DispatcherTimer | NSTimer | NSTimer |
+
+## Handler TODO
+
+### Controls
+* Border
+* ImageButton
+* Switch
+* CheckBox
+* Editor (multiline text)
+* ProgressBar
+* Stepper
+* DatePicker
+* TimePicker
+* RadioButton
+* SearchBar
+* Dialogs (Confirm, Prompt, Alert)
+
+### Layouts
+* Grid
+
+### Pages
+* IndicatorView
+* FlyoutPage
+* TabbedPage
+* NavigationPage
+
+### Collections
+* CollectionView
+* CarouselView
+* RefreshView
+* SwipeView
+
+### Graphics & Media
+* GraphicsView
+
+## Platform TODO
+
+### General
+* Multitarget `Sample` project (`net10.0-tvos;net10.0-macos` in a single csproj)
+* XAML Compilation (currently C#-only pages work reliably)
+* Multi-window support
+* Modal page presentation
+* Navigation stack
+* Keyboard/focus management
+* Accessibility support
+* Font management (custom fonts, font families)
+* Gesture recognizers (Tap, Swipe, Pan, Pinch)
+
+### tvOS Specific
+* Focus Engine integration (visual focus states on controls)
+* Top Shelf extensions
+* TV remote menu button handling
+* TVUIKit integration (TVPosterView, TVMonogramView)
+
+### macOS Specific
+* Menu bar integration (NSMenu)
+* Toolbar support (NSToolbar)
+* Touch Bar support
+* NSSecureTextField for Entry.IsPassword (currently no-op)
+* File dialogs (Open/Save panels)
+* Drag and drop
+* Multiple windows
+* Window lifecycle (minimize, fullscreen, close)
+
+### Broader Goals
+* WebView
+* BlazorWebView
+* Essentials (platform-specific API wrappers)
+* NuGet packaging
+* CI/CD pipeline
+
+## Prerequisites
+
+> **Important:** JetBrains Rider and Visual Studio will not compile these projects. The `net10.0-tvos` and `net10.0-macos` TFMs are not recognized by IDE build systems. All building and running **must be done through the CLI** using the `dotnet` command.
+
+### .NET 10 SDK
+
+Install the latest .NET 10 preview SDK from [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0).
+
+### Workloads (macOS only)
+
+The tvOS and macOS workloads must be installed. These are only available on macOS (requires Xcode).
+
+```bash
+# Install both workloads
+dotnet workload install tvos
+dotnet workload install macos
+
+# Verify they are installed
+dotnet workload list
+```
+
+You should see output similar to:
+
+```
+Installed Workload Id    Manifest Version    Installation Source
+-----------------------------------------------------------------
+macos                    26.2.10197/10.0.100 SDK 10.0.100
+tvos                     26.2.10197/10.0.100 SDK 10.0.100
+```
+
+### Xcode
+
+Xcode must be installed (for Apple platform SDKs and the tvOS simulator). Ensure the command-line tools are selected:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app
+```
+
+## Building
+
+All builds must be done via the CLI:
+
+```bash
+# Build the backend libraries
+dotnet build src/Microsoft.Maui.Platform.TvOS/Microsoft.Maui.Platform.TvOS.csproj
+dotnet build src/Microsoft.Maui.Platform.MacOS/Microsoft.Maui.Platform.MacOS.csproj
+
+# Build the sample apps (use SampleTv / SampleMac, not Sample)
+dotnet build samples/SampleTv/SampleTv.csproj
+dotnet build samples/SampleMac/SampleMac.csproj
+```
+
+> **Note:** Do not use `dotnet build "MAUI Platforms.slnx"` — the solution-level build may fail due to multitarget issues. Build projects individually instead. The `Sample` multitarget project is also not yet working — use `SampleTv` and `SampleMac` instead.
+
+## Running
+
+### tvOS (Simulator)
+
+```bash
+dotnet build samples/SampleTv/SampleTv.csproj -t:Run
+```
+
+This builds, deploys to the tvOS simulator, and launches the app in one step.
+
+### macOS
+
+```bash
+dotnet build samples/SampleMac/SampleMac.csproj
+open samples/SampleMac/bin/Debug/net10.0-macos/osx-arm64/MAUI\ macOS.app
+```
+
+## Key Technical Notes
+
+* MAUI NuGet packages resolve to the `net10.0` (platform-agnostic) assembly for unsupported TFMs. This means `ToPlatform()` returns `object` — custom `ViewExtensions` casts to the native view type (UIView/NSView).
+* The platform-agnostic `ViewHandler` has no-op `PlatformArrange` and returns `Size.Zero` from `GetDesiredSize`. Custom base handlers (`TvOSViewHandler`/`MacOSViewHandler`) override these to bridge MAUI layout to native view frames.
+* macOS NSView uses bottom-left origin by default. All container views override `IsFlipped => true` for MAUI's top-left coordinate system.
+* macOS NSView has no `SizeThatFits()` — the base handler uses `IntrinsicContentSize` and `FittingSize` for native controls, and a custom `SizeThatFits` method on `MacOSContainerView`.
+* `IButton` does not have `Text` or `TextColor` directly — those are on `IText` and `ITextStyle`. Handlers cast via `if (button is IText textButton)`.
+* Sample apps use pure C# pages (no XAML) to avoid XAML compilation issues on unsupported platforms.
