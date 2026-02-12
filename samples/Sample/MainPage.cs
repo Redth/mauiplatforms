@@ -255,6 +255,9 @@ public class MainPage : ContentPage
                     SectionHeader("Horizontal Layout"),
                     layoutRow,
 
+                    SectionHeader("CollectionView"),
+                    CreateCollectionViewDemo(),
+
                     SectionHeader("Status"),
                     _statusLabel,
 
@@ -293,6 +296,33 @@ public class MainPage : ContentPage
         grid.Add(cell4, 1, 1);
 
         return grid;
+    }
+
+    static CollectionView CreateCollectionViewDemo()
+    {
+        var items = new List<string>();
+        for (int i = 1; i <= 20; i++)
+            items.Add($"CollectionView Item {i}");
+
+        var cv = new CollectionView
+        {
+            ItemsSource = items,
+            HeightRequest = 300,
+            ItemTemplate = new DataTemplate(() =>
+            {
+                var label = new Label
+                {
+                    FontSize = 18,
+                    TextColor = Colors.White,
+                    Padding = new Thickness(16, 10),
+                    BackgroundColor = Color.FromArgb("#2A2A4A"),
+                };
+                label.SetBinding(Label.TextProperty, ".");
+                return label;
+            }),
+        };
+
+        return cv;
     }
 
     static Label SectionHeader(string text) => new()

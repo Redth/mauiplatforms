@@ -31,6 +31,7 @@ public static class MauiAppBuilderExtensions
             handlers.AddHandler<ISwitch, SwitchHandler>();
             handlers.AddHandler<ICheckBox, CheckBoxHandler>();
             handlers.AddHandler(typeof(Microsoft.Maui.Controls.Image), typeof(ImageHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.CollectionView), typeof(CollectionViewHandler));
         });
 
         builder.Services.TryAddSingleton<IDispatcher, MacOSDispatcher>();

@@ -29,13 +29,14 @@ Both platforms share the same set of control handlers:
 | Entry | UITextField | NSTextField (editable) |
 | Picker | UIButton + UIAlertController | NSPopUpButton |
 | Slider | Custom TvOSSliderView | NSSlider |
-| Switch | UIButton (toggle) | NSSwitch |
-| CheckBox | ❌ Not available | NSButton (checkbox style) |
+| Switch | UIButton (toggle, no native UISwitch on tvOS) | NSSwitch |
+| CheckBox | ❌ Not available on tvOS | NSButton (checkbox style) |
 | ActivityIndicator | UIActivityIndicatorView | NSProgressIndicator |
 | Image | UIImageView | NSImageView |
 | ScrollView | UIScrollView | NSScrollView |
 | ShapeView | UIView + CAShapeLayer | NSView + CAShapeLayer |
 | Layout (Stack, Grid, etc.) | TvOSContainerView | MacOSContainerView |
+| CollectionView | UIScrollView (item materialization) | NSScrollView (item materialization) |
 | ContentPage | TvOSContainerView | MacOSContainerView |
 | ContentView | TvOSContainerView | MacOSContainerView |
 | BoxView | via ShapeView | via ShapeView |
@@ -71,7 +72,6 @@ Both platforms share the same set of control handlers:
 * NavigationPage
 
 ### Collections
-* CollectionView
 * CarouselView
 * RefreshView
 * SwipeView
