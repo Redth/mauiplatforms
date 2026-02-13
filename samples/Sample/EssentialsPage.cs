@@ -45,15 +45,18 @@ public class EssentialsPage : ContentPage
         layout.Children.Add(CreateRow("Theme", TryGet(() => AppInfo.RequestedTheme.ToString())));
         layout.Children.Add(CreateRow("Layout Direction", TryGet(() => AppInfo.RequestedLayoutDirection.ToString())));
         layout.Children.Add(CreateRow("Packaging Model", TryGet(() => AppInfo.PackagingModel.ToString())));
+        layout.Children.Add(CreateFocusGuide());
 
         layout.Children.Add(CreateHeader("Device Info"));
         layout.Children.Add(CreateRow("Model", TryGet(() => DeviceInfo.Model)));
         layout.Children.Add(CreateRow("Manufacturer", TryGet(() => DeviceInfo.Manufacturer)));
         layout.Children.Add(CreateRow("Device Name", TryGet(() => DeviceInfo.Name)));
+        layout.Children.Add(CreateFocusGuide());
         layout.Children.Add(CreateRow("OS Version", TryGet(() => DeviceInfo.VersionString)));
         layout.Children.Add(CreateRow("Platform", TryGet(() => DeviceInfo.Platform.ToString())));
         layout.Children.Add(CreateRow("Idiom", TryGet(() => DeviceInfo.Idiom.ToString())));
         layout.Children.Add(CreateRow("Device Type", TryGet(() => DeviceInfo.DeviceType.ToString())));
+        layout.Children.Add(CreateFocusGuide());
 
         layout.Children.Add(CreateHeader("Connectivity"));
         _networkAccessLabel = CreateValueLabel(TryGet(() => Connectivity.NetworkAccess.ToString()));
@@ -62,6 +65,7 @@ public class EssentialsPage : ContentPage
         layout.Children.Add(CreateRow("Network Access", _networkAccessLabel));
         layout.Children.Add(CreateRow("Profiles", _profilesLabel));
         layout.Children.Add(_connectivityEventLog);
+        layout.Children.Add(CreateFocusGuide());
 
         Connectivity.ConnectivityChanged += OnConnectivityChanged;
 
@@ -85,14 +89,17 @@ public class EssentialsPage : ContentPage
         layout.Children.Add(CreateRow("Width", TryGet(() => $"{DeviceDisplay.MainDisplayInfo.Width:F0} px")));
         layout.Children.Add(CreateRow("Height", TryGet(() => $"{DeviceDisplay.MainDisplayInfo.Height:F0} px")));
         layout.Children.Add(CreateRow("Density", TryGet(() => $"{DeviceDisplay.MainDisplayInfo.Density:F1}")));
+        layout.Children.Add(CreateFocusGuide());
         layout.Children.Add(CreateRow("Orientation", TryGet(() => DeviceDisplay.MainDisplayInfo.Orientation.ToString())));
         layout.Children.Add(CreateRow("Rotation", TryGet(() => DeviceDisplay.MainDisplayInfo.Rotation.ToString())));
         layout.Children.Add(CreateRow("Refresh Rate", TryGet(() => $"{DeviceDisplay.MainDisplayInfo.RefreshRate:F0} Hz")));
         layout.Children.Add(CreateRow("Keep Screen On", TryGet(() => DeviceDisplay.KeepScreenOn.ToString())));
+        layout.Children.Add(CreateFocusGuide());
 
         layout.Children.Add(CreateHeader("File System"));
         layout.Children.Add(CreateRow("Cache Dir", TryGet(() => FileSystem.CacheDirectory)));
         layout.Children.Add(CreateRow("App Data Dir", TryGet(() => FileSystem.AppDataDirectory)));
+        layout.Children.Add(CreateFocusGuide());
 
         layout.Children.Add(CreateHeader("Text-to-Speech"));
         var ttsEntry = new Entry { Placeholder = "Enter text to speak", TextColor = Colors.White, Text = "Hello from MAUI!" };
@@ -216,4 +223,19 @@ public class EssentialsPage : ContentPage
             valueLabel
         }
     };
+
+#if TVAPP
+    static View CreateFocusGuide() => new Button
+    {
+        HeightRequest = 1,
+        Opacity = 0,
+        Text = ""
+    };
+#else
+    static View CreateFocusGuide() => new BoxView
+    {
+        HeightRequest = 1,
+        Opacity = 0
+    };
+#endif
 }
