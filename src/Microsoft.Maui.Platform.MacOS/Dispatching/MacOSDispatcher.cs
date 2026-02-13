@@ -34,3 +34,8 @@ public class MacOSDispatcher : IDispatcher
         return true;
     }
 }
+
+public class MacOSDispatcherProvider : IDispatcherProvider
+{
+    public IDispatcher? GetForCurrentThread() => MacOSDispatcher.GetForCurrentThread();
+}

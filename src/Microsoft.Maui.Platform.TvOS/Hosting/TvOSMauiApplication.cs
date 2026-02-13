@@ -1,5 +1,6 @@
 using Foundation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.Platform.TvOS.Dispatching;
 using Microsoft.Maui.Platform.TvOS.Handlers;
@@ -31,6 +32,8 @@ public abstract class TvOSMauiApplication : UIApplicationDelegate, IPlatformAppl
             _mauiApp = CreateMauiApp();
             _mauiContext = new TvOSMauiContext(_mauiApp.Services);
             IPlatformApplication.Current = this;
+
+            DispatcherProvider.SetCurrent(new TvOSDispatcherProvider());
 
             _application = _mauiApp.Services.GetRequiredService<IApplication>();
 

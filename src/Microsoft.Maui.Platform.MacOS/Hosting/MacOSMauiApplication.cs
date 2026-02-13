@@ -1,5 +1,6 @@
 using Foundation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.Platform.MacOS.Dispatching;
 using Microsoft.Maui.Platform.MacOS.Handlers;
@@ -29,6 +30,8 @@ public abstract class MacOSMauiApplication : NSApplicationDelegate, IPlatformApp
             _mauiApp = CreateMauiApp();
             _mauiContext = new MacOSMauiContext(_mauiApp.Services);
             IPlatformApplication.Current = this;
+
+            DispatcherProvider.SetCurrent(new MacOSDispatcherProvider());
 
             _application = _mauiApp.Services.GetRequiredService<IApplication>();
 

@@ -34,3 +34,8 @@ public class TvOSDispatcher : IDispatcher
         return true;
     }
 }
+
+public class TvOSDispatcherProvider : IDispatcherProvider
+{
+    public IDispatcher? GetForCurrentThread() => TvOSDispatcher.GetForCurrentThread();
+}

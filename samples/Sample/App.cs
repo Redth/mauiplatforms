@@ -7,8 +7,9 @@ public class App : Microsoft.Maui.Controls.Application
 {
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        // To view the controls demo, uncomment the line below and comment the MainPage line
-        // return new Window(new ControlsDemo());
-        return new Window(new NavigationPage(new MainPage()));
+        var tabbedPage = new TabbedPage();
+        tabbedPage.Children.Add(new MainPage { Title = "Controls" });
+        tabbedPage.Children.Add(new CollectionViewPage { Title = "Collection" });
+        return new Window(tabbedPage);
     }
 }
