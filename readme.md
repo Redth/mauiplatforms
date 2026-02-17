@@ -40,7 +40,7 @@ Both platforms share the same set of control handlers:
 | Switch | UIButton (toggle, no native UISwitch on tvOS) | NSSwitch |
 | CheckBox | ❌ Not available on tvOS | NSButton (checkbox style) |
 | RadioButton | ❌ Not available on tvOS | NSButton (radio style) |
-| SearchBar | ❌ Not implemented | NSSearchField |
+| SearchBar | Custom TvOSSearchBarView | NSSearchField |
 | ActivityIndicator | UIActivityIndicatorView | NSProgressIndicator |
 | ProgressBar | UIProgressView | NSProgressIndicator (bar mode) |
 | Image | UIImageView | NSImageView |
@@ -80,7 +80,6 @@ Both platforms share the same set of control handlers:
 * ImageButton
 * Stepper — tvOS ❌ (macOS ✅)
 * RadioButton — tvOS ❌ (macOS ✅)
-* SearchBar — tvOS ❌ (macOS ✅)
 * Dialogs (Confirm, Prompt, Alert) - macOS ✅, tvOS ❌ (see [Dialogs](#dialogs) below)
 
 ### Pages
@@ -122,7 +121,7 @@ Both platforms share the same set of control handlers:
 * ~~WebView~~ — macOS ✅ (WKWebView), tvOS ❌ (not supported by platform)
 * ~~BlazorWebView~~ — macOS ✅ (custom MacOSBlazorWebView control), tvOS ❌ (no WebView support)
 * App Icons (ideally via MAUI build tools / `MauiIcon`)
-* ~~Essentials (platform-specific API wrappers)~~ — AppInfo ✅, DeviceInfo ✅, Connectivity ✅, Battery ✅ (macOS only), DeviceDisplay ✅, FileSystem ✅, Preferences ✅, SecureStorage ✅, FilePicker ✅ (macOS only), MediaPicker ✅ (macOS only), TextToSpeech ✅, Clipboard ✅ (macOS only), Browser ✅ (macOS only), Share ✅ (macOS only), Launcher ✅ (macOS only) (see [Essentials](#essentials) below)
+* ~~Essentials (platform-specific API wrappers)~~ — AppInfo ✅, DeviceInfo ✅, Connectivity ✅, Battery ✅ (macOS only), DeviceDisplay ✅, FileSystem ✅, Preferences ✅, SecureStorage ✅, FilePicker ✅ (macOS only), MediaPicker ✅ (macOS only), TextToSpeech ✅, Clipboard ✅, Browser ✅ (macOS only), Share ✅ (macOS only), Launcher ✅ (macOS only) (see [Essentials](#essentials) below)
 * NuGet packaging
 * CI/CD pipeline
 
@@ -255,7 +254,7 @@ Platform-specific implementations of MAUI Essentials APIs for both tvOS and macO
 | FilePicker | ❌ | ✅ | Single/multiple file picking via NSOpenPanel. Not available on tvOS. |
 | MediaPicker | ❌ | ✅ | Photo/video picking via NSOpenPanel (no capture). Not available on tvOS. |
 | TextToSpeech | ✅ | ✅ | macOS: NSSpeechSynthesizer, tvOS: AVSpeechSynthesizer. GetLocalesAsync unavailable on tvOS (AOT). |
-| Clipboard | ❌ | ✅ | Copy/paste via NSPasteboard. Not available on tvOS. |
+| Clipboard | ✅ | ✅ | Copy/paste text. macOS: NSPasteboard, tvOS: in-process (no system pasteboard on tvOS). |
 | Browser | ❌ | ✅ | Open URLs in default browser via NSWorkspace. Not available on tvOS. |
 | Share | ❌ | ✅ | Share sheet via NSSharingServicePicker. Not available on tvOS. |
 | Launcher | ❌ | ✅ | Open files/URIs with default app via NSWorkspace. Not available on tvOS. |

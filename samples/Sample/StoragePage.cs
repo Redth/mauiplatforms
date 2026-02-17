@@ -1,4 +1,5 @@
 using Microsoft.Maui;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Storage;
@@ -16,8 +17,10 @@ public class StoragePage : ContentPage
     Label _prefValueLabel;
     Label _secureValueLabel;
     Label _statusLabel;
+    Label _clipboardLabel;
     Entry _prefEntry;
     Entry _secureEntry;
+    Entry _clipboardEntry;
 #if MACAPP
     Label _pickerResultLabel;
 #endif
@@ -83,6 +86,27 @@ public class StoragePage : ContentPage
 
         // Load counter
         _counter = Preferences.Get("test_counter", 0);
+
+        // Clipboard section
+        layout.Children.Add(CreateHeader("Clipboard"));
+
+        _clipboardLabel = new Label
+        {
+            FontSize = 16,
+            Text = "Clipboard: (empty)"
+        }.WithPrimaryText();
+        layout.Children.Add(_clipboardLabel);
+
+        _clipboardEntry = new Entry { Placeholder = "Text to copy" }.WithEntryTheme();
+        layout.Children.Add(_clipboardEntry);
+
+        var clipCopyBtn = new Button { Text = "Copy to Clipboard" };
+        clipCopyBtn.Clicked += OnCopyClipboard;
+        layout.Children.Add(clipCopyBtn);
+
+        var clipPasteBtn = new Button { Text = "Paste from Clipboard" };
+        clipPasteBtn.Clicked += OnPasteClipboard;
+        layout.Children.Add(clipPasteBtn);
 
 #if MACAPP
         // File Picker section
@@ -190,6 +214,40 @@ public class StoragePage : ContentPage
         catch (Exception ex)
         {
             _secureValueLabel.Text = $"Error: {ex.Message}";
+        }
+    }
+
+    async void OnCopyClipboard(object? sender, EventArgs e)
+    {
+        var text = _clipboardEntry?.Text;
+        if (string.IsNullOrEmpty(text))
+        {
+            _statusLabel.Text = "Enter text to copy first";
+            return;
+        }
+        try
+        {
+            await Clipboard.SetTextAsync(text);
+            _clipboardLabel.Text = $"Copied: {text}";
+            _statusLabel.Text = "Text copied to clipboard";
+        }
+        catch (Exception ex)
+        {
+            _statusLabel.Text = $"Error: {ex.Message}";
+        }
+    }
+
+    async void OnPasteClipboard(object? sender, EventArgs e)
+    {
+        try
+        {
+            var text = await Clipboard.GetTextAsync();
+            _clipboardLabel.Text = text is not null ? $"Pasted: {text}" : "Clipboard: (empty)";
+            _statusLabel.Text = text is not null ? "Text pasted from clipboard" : "Clipboard is empty";
+        }
+        catch (Exception ex)
+        {
+            _statusLabel.Text = $"Error: {ex.Message}";
         }
     }
 

@@ -134,6 +134,28 @@ public class MainPage : ContentPage
             Placeholder = "Type something...",
         }.WithEntryTheme();
 
+        // --- SearchBar ---
+        var searchResult = new Label
+        {
+            Text = "No search yet",
+            FontSize = 18,
+        }.WithStatusText();
+
+        var searchBar = new SearchBar
+        {
+            Placeholder = "Search...",
+        };
+        searchBar.SearchButtonPressed += (s, e) =>
+        {
+            searchResult.Text = !string.IsNullOrEmpty(searchBar.Text)
+                ? $"Searched: \"{searchBar.Text}\""
+                : "Empty search";
+        };
+        searchBar.TextChanged += (s, e) =>
+        {
+            searchResult.Text = $"Typing: \"{e.NewTextValue}\"";
+        };
+
         // --- Picker ---
         var picker = new Picker
         {
@@ -256,6 +278,10 @@ public class MainPage : ContentPage
 
                     SectionHeader("Entry"),
                     entry,
+
+                    SectionHeader("SearchBar"),
+                    searchBar,
+                    searchResult,
 
 #if MACAPP
                     SectionHeader("Editor (Multiline)"),
