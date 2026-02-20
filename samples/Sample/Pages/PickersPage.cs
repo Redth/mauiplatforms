@@ -57,19 +57,19 @@ public class PickersPage : ContentPage
 					datePicker,
 					dateLabel,
 
-					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 
 					new Label { Text = "TimePicker", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					timePicker,
 					timeLabel,
 
-					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 
 					new Label { Text = "Picker (Dropdown)", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					picker,
 					pickerLabel,
 
-					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 
 					new Label { Text = "SearchBar", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					searchBar,

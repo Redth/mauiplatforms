@@ -37,7 +37,7 @@ public class GraphicsPage : ContentPage
 	{
 		public void Draw(ICanvas canvas, RectF rect)
 		{
-			canvas.FillColor = Color.FromArgb("#f8f9fa");
+			canvas.FillColor = Colors.Gray.WithAlpha(0.1f);
 			canvas.FillRectangle(0, 0, rect.Width, rect.Height);
 
 			canvas.StrokeColor = Colors.DodgerBlue;
@@ -91,7 +91,7 @@ public class GraphicsPage : ContentPage
 				canvas.FillRoundedRectangle(x, 10, blockW - 4, 50, 6);
 
 				canvas.FontSize = 9;
-				canvas.FontColor = Colors.DarkSlateGray;
+				canvas.FontColor = Colors.Gray;
 				canvas.DrawString(name, x, 70, blockW - 4, 20, HorizontalAlignment.Center, VerticalAlignment.Top);
 
 				x += blockW;
@@ -103,7 +103,7 @@ public class GraphicsPage : ContentPage
 	{
 		public void Draw(ICanvas canvas, RectF rect)
 		{
-			canvas.FillColor = Color.FromArgb("#f8f9fa");
+			canvas.FillColor = Colors.Gray.WithAlpha(0.1f);
 			canvas.FillRectangle(0, 0, rect.Width, rect.Height);
 
 			var data = new[] { 35, 65, 45, 80, 55, 70, 40, 90, 60, 75 };
@@ -130,7 +130,7 @@ public class GraphicsPage : ContentPage
 				canvas.FillRoundedRectangle(x, y, barWidth - 8, barH, 3);
 
 				canvas.FontSize = 10;
-				canvas.FontColor = Colors.DarkSlateGray;
+				canvas.FontColor = Colors.Gray;
 				canvas.DrawString(data[i].ToString(), x, y - 14, barWidth - 8, 14, HorizontalAlignment.Center, VerticalAlignment.Center);
 
 				canvas.FontSize = 9;
@@ -138,7 +138,7 @@ public class GraphicsPage : ContentPage
 			}
 
 			canvas.FontSize = 13;
-			canvas.FontColor = Colors.DarkSlateGray;
+			canvas.FontColor = Colors.Gray;
 			canvas.DrawString("Monthly Performance", rect.Width / 2, 8, HorizontalAlignment.Center);
 		}
 	}

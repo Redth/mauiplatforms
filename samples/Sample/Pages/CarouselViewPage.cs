@@ -120,7 +120,7 @@ public class CarouselViewPage : ContentPage
 				HeightRequest = 10,
 				StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 5 },
 				StrokeThickness = 0,
-				BackgroundColor = i == 0 ? Colors.DodgerBlue : Colors.LightGray,
+				BackgroundColor = i == 0 ? Colors.DodgerBlue : Colors.Gray,
 			};
 			dots.Add(dot);
 			dotsLayout.Children.Add(dot);
@@ -129,7 +129,7 @@ public class CarouselViewPage : ContentPage
 		carousel.PositionChanged += (s, e) =>
 		{
 			for (int i = 0; i < dots.Count; i++)
-				dots[i].BackgroundColor = i == e.CurrentPosition ? Colors.DodgerBlue : Colors.LightGray;
+				dots[i].BackgroundColor = i == e.CurrentPosition ? Colors.DodgerBlue : Colors.Gray;
 		};
 
 		Content = new VerticalStackLayout

@@ -38,8 +38,8 @@ public class CollectionViewPage : ContentPage
 					activeTab.TextColor = Colors.Gray;
 					activeTab.BackgroundColor = Colors.Transparent;
 				}
-				btn.TextColor = Colors.Black;
-				btn.BackgroundColor = Colors.LightSkyBlue;
+				btn.TextColor = Colors.CornflowerBlue;
+				btn.BackgroundColor = Colors.CornflowerBlue.WithAlpha(0.15f);
 				activeTab = btn;
 
 				contentArea.Children.Clear();
@@ -49,8 +49,8 @@ public class CollectionViewPage : ContentPage
 		}
 
 		var firstBtn = (Button)tabs.Children[0];
-		firstBtn.TextColor = Colors.Black;
-		firstBtn.BackgroundColor = Colors.LightSkyBlue;
+		firstBtn.TextColor = Colors.CornflowerBlue;
+		firstBtn.BackgroundColor = Colors.CornflowerBlue.WithAlpha(0.15f);
 		activeTab = firstBtn;
 		contentArea.Children.Add(pages[0].builder());
 
@@ -61,7 +61,7 @@ public class CollectionViewPage : ContentPage
 			Children =
 			{
 				tabs,
-				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 				contentArea,
 			}
 		};
@@ -104,7 +104,6 @@ public class CollectionViewPage : ContentPage
 			{
 				Text = item,
 				BackgroundColor = Colors.Transparent,
-				TextColor = Colors.Black,
 				FontSize = 14,
 				HorizontalOptions = LayoutOptions.Fill,
 			};
@@ -115,7 +114,7 @@ public class CollectionViewPage : ContentPage
 				selectedLabel.TextColor = Colors.DodgerBlue;
 			};
 			stack.Children.Add(btn);
-			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Color.FromArgb("#f0f0f0"), StrokeThickness = 0 });
+			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.2, StrokeThickness = 0 });
 		}
 	}
 
@@ -207,9 +206,8 @@ public class CollectionViewPage : ContentPage
 		var container = new Border
 		{
 			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
-			Stroke = Color.FromArgb("#e0e0e0"),
+			Stroke = Colors.Gray.WithAlpha(0.3f),
 			StrokeThickness = 1,
-			BackgroundColor = Colors.White,
 			Content = row,
 		};
 		container.GestureRecognizers.Add(tapGesture);
@@ -295,7 +293,7 @@ public class CollectionViewPage : ContentPage
 			};
 
 			stack.Children.Add(row);
-			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Color.FromArgb("#f0f0f0"), StrokeThickness = 0 });
+			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.2, StrokeThickness = 0 });
 		}
 
 		selectAllBox.CheckedChanged += (s, e) =>
@@ -327,7 +325,7 @@ public class CollectionViewPage : ContentPage
 				new Label { Text = "Task List", FontSize = 16, FontAttributes = FontAttributes.Bold },
 				selectionLabel,
 				selectAllRow,
-				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 				new ScrollView { HeightRequest = 320, Content = stack },
 				deleteBtn,
 			}

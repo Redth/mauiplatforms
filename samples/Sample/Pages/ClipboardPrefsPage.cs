@@ -140,7 +140,7 @@ public class ClipboardPrefsPage : ContentPage
 		Text = text, FontSize = 18, FontAttributes = FontAttributes.Bold,
 		Margin = new Thickness(0, 8, 0, 4),
 	};
-	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0, Margin = new Thickness(0, 4) };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0, Margin = new Thickness(0, 4) };
 
 	static Grid KeyValueRow(View left, View right)
 	{

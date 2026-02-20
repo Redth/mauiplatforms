@@ -145,7 +145,7 @@ public class NavigationDemoPage : ContentPage
 				pushNoNavBarButton,
 				pushModalButton,
 
-				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 
 				new Label
 				{

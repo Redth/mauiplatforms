@@ -183,7 +183,7 @@ public class LayoutsPage : ContentPage
 		Text = text,
 		FontSize = 16,
 		FontAttributes = FontAttributes.Bold,
-		TextColor = Colors.DarkSlateGray,
+		TextColor = Colors.CornflowerBlue,
 	};
 
 	static Grid CreateNestedGrid()

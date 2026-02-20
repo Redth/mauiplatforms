@@ -76,7 +76,7 @@ public partial class ContentPageHandler : MacOSViewHandler<IContentView, MacOSCo
         if (page.Background is Graphics.SolidPaint solidPaint && solidPaint.Color != null)
             handler.PlatformView.Layer.BackgroundColor = solidPaint.Color.ToPlatformColor().CGColor;
         else
-            handler.PlatformView.Layer.BackgroundColor = NSColor.ControlBackground.CGColor;
+            handler.PlatformView.Layer.BackgroundColor = NSColor.Clear.CGColor;
     }
 
     public static void MapMenuBarItems(ContentPageHandler handler, IContentView page)

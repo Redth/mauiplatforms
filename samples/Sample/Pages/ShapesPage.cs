@@ -155,8 +155,8 @@ public class ShapesPage : ContentPage
 		Text = text,
 		FontSize = 16,
 		FontAttributes = FontAttributes.Bold,
-		TextColor = Colors.DarkSlateGray,
+		TextColor = Colors.CornflowerBlue,
 	};
 
-	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 };
 }

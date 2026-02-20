@@ -77,7 +77,6 @@ public class ListViewPage : ContentPage
 				var cell = new TextCell();
 				cell.SetBinding(TextCell.TextProperty, "Title");
 				cell.SetBinding(TextCell.DetailProperty, "Subtitle");
-				cell.TextColor = Colors.Black;
 				cell.DetailColor = Colors.Gray;
 				return cell;
 			}),
@@ -91,10 +90,10 @@ public class ListViewPage : ContentPage
 				Padding = new Thickness(24),
 				Children =
 				{
-					new Label { Text = "ViewCell with DataTemplate", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.DarkSlateGray },
+					new Label { Text = "ViewCell with DataTemplate", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.CornflowerBlue },
 					new Border
 					{
-						Stroke = Colors.LightGray,
+						Stroke = Colors.Gray,
 						StrokeThickness = 1,
 						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Content = listView,
@@ -102,12 +101,12 @@ public class ListViewPage : ContentPage
 					},
 					selectedLabel,
 
-					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 },
 
-					new Label { Text = "TextCell ListView", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.DarkSlateGray },
+					new Label { Text = "TextCell ListView", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.CornflowerBlue },
 					new Border
 					{
-						Stroke = Colors.LightGray,
+						Stroke = Colors.Gray,
 						StrokeThickness = 1,
 						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Content = textCellListView,

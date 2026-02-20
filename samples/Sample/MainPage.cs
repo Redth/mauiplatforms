@@ -115,7 +115,7 @@ public class MainPage : ContentPage
         {
             Text = "Show Confirm",
             BackgroundColor = AppColors.AccentOrange,
-            TextColor = Colors.Black,
+            TextColor = Colors.White,
         };
         confirmButton.Clicked += OnConfirmClicked;
 

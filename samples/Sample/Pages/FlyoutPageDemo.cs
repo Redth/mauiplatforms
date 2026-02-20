@@ -41,7 +41,7 @@ public class FlyoutPageDemo : ContentPage
 			FontAttributes = FontAttributes.Bold,
 			Padding = new Thickness(16, 16, 16, 8),
 		});
-		menuStack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 });
+		menuStack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Colors.Gray, Opacity = 0.3, StrokeThickness = 0 });
 
 		foreach (var (icon, title, color) in menuItems)
 		{
@@ -49,7 +49,6 @@ public class FlyoutPageDemo : ContentPage
 			{
 				Text = $"{icon}  {title}",
 				BackgroundColor = Colors.Transparent,
-				TextColor = Colors.Black,
 				FontSize = 14,
 				HorizontalOptions = LayoutOptions.Fill,
 			};
@@ -101,7 +100,7 @@ public class FlyoutPageDemo : ContentPage
 							HeightRequest = 400,
 							Content = menuStack,
 						},
-						new Border { WidthRequest = 2, BackgroundColor = Colors.LightGray, HeightRequest = 400, StrokeThickness = 0 },
+						new Border { WidthRequest = 2, BackgroundColor = Colors.Gray, Opacity = 0.3, HeightRequest = 400, StrokeThickness = 0 },
 						new ScrollView
 						{
 							HeightRequest = 400,

@@ -61,7 +61,7 @@ public class TableViewPage : ContentPage
 
 		var border = new Border
 		{
-			Stroke = Colors.LightGray,
+			Stroke = Colors.Gray,
 			StrokeThickness = 1,
 			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 			Content = tableView,

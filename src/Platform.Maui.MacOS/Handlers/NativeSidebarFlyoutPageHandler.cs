@@ -283,7 +283,9 @@ public partial class NativeSidebarFlyoutPageHandler : MacOSViewHandler<IFlyoutVi
 			DividerStyle = NSSplitViewDividerStyle.Thin,
 		};
 
-		// Use NSVisualEffectView with sidebar material for Liquid Glass appearance
+		// NSVisualEffectView with sidebar material for translucent sidebar appearance.
+		// On macOS 26+ linked with SDK 26, AppKit automatically applies the
+		// Liquid Glass style to views using the sidebar material.
 		_sidebarEffectView = new NSVisualEffectView
 		{
 			Material = NSVisualEffectMaterial.Sidebar,
@@ -300,10 +302,7 @@ public partial class NativeSidebarFlyoutPageHandler : MacOSViewHandler<IFlyoutVi
 			HeaderView = null,
 		};
 
-		var column = new NSTableColumn("SidebarColumn")
-		{
-			Editable = false,
-		};
+		var column = new NSTableColumn("SidebarColumn") { Editable = false };
 		_outlineView.AddColumn(column);
 		_outlineView.OutlineTableColumn = column;
 
@@ -327,18 +326,15 @@ public partial class NativeSidebarFlyoutPageHandler : MacOSViewHandler<IFlyoutVi
 			_scrollView.BottomAnchor.ConstraintEqualTo(_sidebarEffectView.BottomAnchor),
 		});
 
-		// Detail container
 		_detailContainer = new NSView { WantsLayer = true };
 
 		splitView.AddArrangedSubview(_sidebarEffectView);
 		splitView.AddArrangedSubview(_detailContainer);
 
-		// Sidebar width constraint
 		_sidebarWidthConstraint = _sidebarEffectView.WidthAnchor.ConstraintEqualTo((nfloat)_flyoutWidth);
 		_sidebarWidthConstraint.Priority = (float)NSLayoutPriority.DefaultHigh;
 		_sidebarWidthConstraint.Active = true;
 
-		// Sidebar holds width, detail flexes
 		splitView.SetHoldingPriority(251, 0);
 		splitView.SetHoldingPriority(249, 1);
 
