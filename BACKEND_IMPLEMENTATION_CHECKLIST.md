@@ -110,12 +110,12 @@ Items marked `[x]` have a handler or implementation present; items marked `[~]` 
 | Control | Status | Notes |
 |---------|--------|-------|
 | [~] **CollectionView** | Partial | Maps ItemsSource, ItemTemplate via `NSScrollView`; missing SelectionMode, ScrollTo, grouping, virtualization, item spacing, layout modes, incremental loading |
-| [ ] **ListView** | ❌ | Not implemented |
+| [x] **ListView** | ✅ | NSScrollView-based with DataTemplate, ViewCell, TextCell, ImageCell, SwitchCell, EntryCell, selection, header/footer, grouping |
 | [ ] **CarouselView** | ❌ | Not implemented |
-| [ ] **IndicatorView** | ❌ | Not implemented |
-| [ ] **TableView** | ❌ | Not implemented |
-| [ ] **SwipeView** | ❌ | Not implemented |
-| [ ] **RefreshView** | ❌ | Not implemented |
+| [x] **IndicatorView** | ✅ | Page indicator dots with configurable size, color, and shape |
+| [x] **TableView** | ✅ | NSScrollView-based with TableRoot/TableSection, TextCell, SwitchCell, EntryCell, ViewCell |
+| [x] **SwipeView** | ✅ | Swipe-to-reveal actions via horizontal pan gesture with left/right items |
+| [x] **RefreshView** | ✅ | Content wrapper with NSProgressIndicator spinner overlay (no pull-to-refresh on macOS) |
 
 ---
 
@@ -227,12 +227,12 @@ Every handler must support these properties mapped from the base `IView` in `Mac
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| [ ] **VisualStateManager** | ❌ | GoToState for "Normal", "Focused", "PointerOver", "Disabled", custom states |
-| [ ] **PropertyTrigger** | ❌ | React to property value changes |
-| [ ] **DataTrigger** | ❌ | React to binding value changes with conditions |
-| [ ] **MultiTrigger** | ❌ | Multiple conditions combined |
-| [ ] **EventTrigger** | ❌ | React to events (begin animations, etc.) |
-| [ ] **Behaviors** | ❌ | Attach custom behaviors to views |
+| [x] **VisualStateManager** | ✅ | Cross-platform MAUI feature — works without platform code via binding/property system |
+| [x] **PropertyTrigger** | ✅ | Cross-platform MAUI feature — no platform handler needed |
+| [x] **DataTrigger** | ✅ | Cross-platform MAUI feature — no platform handler needed |
+| [x] **MultiTrigger** | ✅ | Cross-platform MAUI feature — no platform handler needed |
+| [x] **EventTrigger** | ✅ | Cross-platform MAUI feature — no platform handler needed |
+| [x] **Behaviors** | ✅ | Cross-platform MAUI feature — no platform handler needed |
 
 ---
 
@@ -353,10 +353,10 @@ FormattedText requires special handling as a compound property using `NSAttribut
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| [ ] **ControlTemplate** | ❌ | Custom control templates defined in XAML — need to render the visual tree from the template |
-| [ ] **ContentPresenter** | ❌ | Placeholder in ControlTemplate that inserts the actual content |
-| [ ] **RadioButton ControlTemplate** | ❌ | RadioButton uses ControlTemplate by default for its visual — without this, RadioButton `Content` renders as `Grid.ToString()` instead of the visual content |
-| [ ] **TemplatedView** | ❌ | Base class for controls with ControlTemplate support |
+| [x] **ControlTemplate** | ✅ | Cross-platform MAUI feature — template inflation via ContentPresenter, no platform code needed |
+| [x] **ContentPresenter** | ✅ | Cross-platform MAUI feature — dynamically instantiates template content |
+| [x] **RadioButton ControlTemplate** | ✅ | Cross-platform MAUI feature — works via ControlTemplate system |
+| [x] **TemplatedView** | ✅ | Cross-platform MAUI feature — base class for controls with ControlTemplate support |
 
 ---
 
@@ -368,7 +368,7 @@ FormattedText requires special handling as a compound property using `NSAttribut
 | **Pages** | 4 of 5 | 5 | Missing: Shell |
 | **Layouts** | 10 of 10 | 10 | ✅ All layouts implemented including Frame via BorderHandler |
 | **Basic Controls** | 12 of 14 | 14 | ImageButton now implemented; Label has full Padding support |
-| **Collection Controls** | 1 of 7 | 7 | Only CollectionView (basic); missing 6 controls |
+| **Collection Controls** | 6 of 7 | 7 | Missing: CarouselView |
 | **Input Controls** | 4 of 4 | 4 | All present; Entry/Editor improved with font/spacing |
 | **Gesture Recognizers** | 5 of 5 | 5 | ✅ All: Tap, Pan, Swipe, Pinch, Pointer |
 | **Shapes** | 1 handler | 6 types | Single ShapeViewHandler covers all shape types |
@@ -379,3 +379,5 @@ FormattedText requires special handling as a compound property using `NSAttribut
 | **MenuBar** | 4 of 4 | 4 | ✅ Full: MenuBarItem, MenuFlyoutItem, MenuFlyoutSeparator, MenuFlyoutSubItem |
 | **FormattedText** | 9 of 9 | 9 | ✅ Full: All span properties mapped via NSAttributedString |
 | **Base View Properties** | ~18 of 20+ | 20+ | Opacity, IsVisible, IsEnabled, Background, FlowDirection, AutomationId, Transforms, Clip, Shadow, ToolTip, HorizontalOptions, VerticalOptions, Margin, Padding |
+| **VSM & Triggers** | 6 of 6 | 6 | ✅ All cross-platform MAUI features — no platform code needed |
+| **ControlTemplate** | 4 of 4 | 4 | ✅ All cross-platform MAUI features — ControlTemplate, ContentPresenter, TemplatedView, RadioButton |

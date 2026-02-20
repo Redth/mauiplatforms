@@ -31,6 +31,8 @@ class MainShell : FlyoutPage
 		("📐", "Layouts", () => new LayoutsPage()),
 		("💬", "Alerts & Dialogs", () => new AlertsPage()),
 		("📋", "Collection View", () => new Pages.CollectionViewPage()),
+		("📝", "ListView", () => new Pages.ListViewPage()),
+		("⚙️", "TableView", () => new Pages.TableViewPage()),
 		("🎨", "Graphics", () => new GraphicsPage()),
 		("👆", "Gestures", () => new Pages.GesturesPage()),
 		("⭐", "Shapes", () => new Pages.ShapesPage()),

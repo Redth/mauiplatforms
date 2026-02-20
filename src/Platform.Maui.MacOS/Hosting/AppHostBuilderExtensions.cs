@@ -53,6 +53,11 @@ public static partial class AppHostBuilderExtensions
         handlersCollection.AddHandler<RadioButton, RadioButtonHandler>();
         handlersCollection.AddHandler<SearchBar, SearchBarHandler>();
         handlersCollection.AddHandler<CollectionView, CollectionViewHandler>();
+        handlersCollection.AddHandler<ListView, ListViewHandler>();
+        handlersCollection.AddHandler<TableView, TableViewHandler>();
+        handlersCollection.AddHandler<RefreshView, RefreshViewHandler>();
+        handlersCollection.AddHandler<SwipeView, SwipeViewHandler>();
+        handlersCollection.AddHandler<IndicatorView, IndicatorViewHandler>();
         handlersCollection.AddHandler<GraphicsView, GraphicsViewHandler>();
         handlersCollection.AddHandler<WebView, WebViewHandler>();
 

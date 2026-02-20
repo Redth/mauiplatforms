@@ -108,6 +108,12 @@
         <Compile Include="..\Sample\Pages\FontsPage.cs">
             <Link>Pages\FontsPage.cs</Link>
         </Compile>
+        <Compile Include="..\Sample\Pages\ListViewPage.cs">
+            <Link>Pages\ListViewPage.cs</Link>
+        </Compile>
+        <Compile Include="..\Sample\Pages\TableViewPage.cs">
+            <Link>Pages\TableViewPage.cs</Link>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
