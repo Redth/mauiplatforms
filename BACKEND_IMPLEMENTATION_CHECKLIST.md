@@ -262,17 +262,17 @@ Every handler must support these properties mapped from the base `IView` in `Mac
 | [x] **Device Info** | `IDeviceInfo` | ✅ | `DeviceInfoImplementation` |
 | [x] **File Picker** | `IFilePicker` | ✅ | `FilePickerImplementation` — `NSOpenPanel` |
 | [x] **File System** | `IFileSystem` | ✅ | `FileSystemImplementation` |
-| [ ] **Geolocation** | `IGeolocation` | ❌ | Needs `CLLocationManager` implementation |
+| [x] **Geolocation** | `IGeolocation` | ✅ | `GeolocationImplementation` — CLLocationManager with foreground listening |
 | [x] **Launcher** | `ILauncher` | ✅ | `LauncherImplementation` — `NSWorkspace.OpenUrl` |
-| [ ] **Map** | `IMap` | ❌ | Needs to open Apple Maps via URL scheme |
+| [x] **Map** | `IMap` | ✅ | `MapImplementation` — Opens Apple Maps via URL scheme |
 | [x] **Media Picker** | `IMediaPicker` | ✅ | `MediaPickerImplementation` |
 | [x] **Preferences** | `IPreferences` | ✅ | `PreferencesImplementation` — `NSUserDefaults` |
 | [x] **Secure Storage** | `ISecureStorage` | ✅ | `SecureStorageImplementation` — Keychain |
-| [ ] **Semantic Screen Reader** | `ISemanticScreenReader` | ❌ | Needs `NSAccessibility` announce support |
+| [x] **Semantic Screen Reader** | `ISemanticScreenReader` | ✅ | `SemanticScreenReaderImplementation` — VoiceOver via NSAccessibility |
 | [x] **Share** | `IShare` | ✅ | `ShareImplementation` — `NSSharingServicePicker` |
 | [x] **Text-to-Speech** | `ITextToSpeech` | ✅ | `TextToSpeechImplementation` — `NSSpeechSynthesizer` / `AVSpeechSynthesizer` |
 | [x] **Version Tracking** | `IVersionTracking` | ✅ | Cross-platform `VersionTrackingImplementation` uses `IPreferences` + `IAppInfo` (both implemented) |
-| [ ] **Vibration** | `IVibration` | ❌ | Not typically available on macOS (no haptic motor); consider `NSHapticFeedbackManager` on supported hardware |
+| [x] **Vibration** | `IVibration` | ✅ | No-op (IsSupported=false) — macOS lacks vibration hardware |
 
 ---
 
@@ -372,7 +372,7 @@ FormattedText requires special handling as a compound property using `NSAttribut
 | **Input Controls** | 4 of 4 | 4 | All present; Entry/Editor improved with font/spacing |
 | **Gesture Recognizers** | 5 of 5 | 5 | ✅ All: Tap, Pan, Swipe, Pinch, Pointer |
 | **Shapes** | 1 handler | 6 types | Single ShapeViewHandler covers all shape types |
-| **Essentials** | 16 of 20 | 20 | Missing: Geolocation, Map, SemanticScreenReader, Vibration |
+| **Essentials** | 20 of 20 | 20 | ✅ All essentials implemented |
 | **Dialog Types** | 3 of 3 | 3 | All implemented via NSAlert |
 | **Font Services** | 5 of 5 | 5 | ✅ Full: IFontManager, IFontRegistrar, IEmbeddedFontLoader, Native Loading, IFontNamedSizeService |
 | **Animations** | 9 of 9 | 9 | ✅ Full: MacOSTicker + MAUI's cross-platform animation system handles all animation types |
