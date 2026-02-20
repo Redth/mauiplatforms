@@ -210,7 +210,18 @@ public abstract class MacOSViewHandler<TVirtualView, TPlatformView> : ViewHandle
         if (platformView.Layer == null)
             return;
 
-        platformView.Layer.AnchorPoint = new CGPoint(view.AnchorX, view.AnchorY);
+        // Adjust position when changing anchorPoint to prevent frame from shifting.
+        // AppKit flipped views default anchorPoint to (0,0), not (0.5,0.5) like iOS.
+        var newAnchor = new CGPoint(view.AnchorX, view.AnchorY);
+        var oldAnchor = platformView.Layer.AnchorPoint;
+        if (oldAnchor != newAnchor)
+        {
+            var bounds = platformView.Layer.Bounds;
+            platformView.Layer.Position = new CGPoint(
+                platformView.Layer.Position.X + (newAnchor.X - oldAnchor.X) * bounds.Width,
+                platformView.Layer.Position.Y + (newAnchor.Y - oldAnchor.Y) * bounds.Height);
+            platformView.Layer.AnchorPoint = newAnchor;
+        }
 
         var transform = CATransform3D.Identity;
 

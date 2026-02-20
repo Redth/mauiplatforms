@@ -37,6 +37,15 @@ public class GesturesPage : ContentPage
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
 		};
+		// Container so pan gesture area doesn't move with the visual transform
+		var panContainer = new Grid
+		{
+			WidthRequest = 400,
+			HeightRequest = 120,
+			BackgroundColor = Color.FromArgb("#F0F0F0"),
+			HorizontalOptions = LayoutOptions.Start,
+			Children = { panBox },
+		};
 		var panGesture = new PanGestureRecognizer();
 		panGesture.PanUpdated += (s, e) =>
 		{
@@ -52,23 +61,33 @@ public class GesturesPage : ContentPage
 					break;
 			}
 		};
-		panBox.GestureRecognizers.Add(panGesture);
+		panContainer.GestureRecognizers.Add(panGesture);
 
 		// Swipe gesture demo
 		var swipeLabel = new Label
 		{
-			Text = "Swipe me!",
-			FontSize = 18,
+			Text = "Click and drag quickly, then release",
+			FontSize = 14,
+		};
+		var swipeResultLabel = new Label
+		{
+			Text = "Swipe result: (none)",
+			FontSize = 16,
 			FontAttributes = FontAttributes.Bold,
-			BackgroundColor = Color.FromArgb("#E8F0FE"),
-			Padding = new Thickness(24, 16),
+			TextColor = Colors.DodgerBlue,
+		};
+		var swipeBox = new BoxView
+		{
+			Color = Color.FromArgb("#E8F0FE"),
+			WidthRequest = 300,
+			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
 		};
 		foreach (var dir in new[] { SwipeDirection.Left, SwipeDirection.Right, SwipeDirection.Up, SwipeDirection.Down })
 		{
 			var swipeGesture = new SwipeGestureRecognizer { Direction = dir };
-			swipeGesture.Swiped += (s, e) => swipeLabel.Text = $"Swiped: {e.Direction}";
-			swipeLabel.GestureRecognizers.Add(swipeGesture);
+			swipeGesture.Swiped += (s, e) => swipeResultLabel.Text = $"Swiped: {e.Direction}";
+			swipeBox.GestureRecognizers.Add(swipeGesture);
 		}
 
 		// Pinch gesture demo
@@ -142,13 +161,15 @@ public class GesturesPage : ContentPage
 					Separator(),
 
 					SectionHeader("PanGestureRecognizer"),
-					new Label { Text = "Drag the green box:", FontSize = 14 },
-					panBox,
+					new Label { Text = "Click and drag in the gray area:", FontSize = 14 },
+					panContainer,
 
 					Separator(),
 
 					SectionHeader("SwipeGestureRecognizer"),
 					swipeLabel,
+					swipeBox,
+					swipeResultLabel,
 
 					Separator(),
 

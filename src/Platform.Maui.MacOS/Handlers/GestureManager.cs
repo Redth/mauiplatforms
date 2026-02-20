@@ -89,8 +89,27 @@ public static class GestureManager
 
     static void AddSwipeGesture(NSView view, SwipeGestureRecognizer swipe)
     {
-        var recognizer = new MacOSSwipeGestureRecognizer(swipe);
-        view.AddGestureRecognizer(recognizer);
+        // Combine with existing swipe recognizer if present, so we don't have
+        // multiple NSPanGestureRecognizers competing on the same view
+        MacOSSwipeGestureRecognizer? existing = null;
+        if (view.GestureRecognizers != null)
+        {
+            foreach (var gr in view.GestureRecognizers)
+            {
+                if (gr is MacOSSwipeGestureRecognizer s)
+                { existing = s; break; }
+            }
+        }
+
+        if (existing != null)
+        {
+            existing.AddSwipeRecognizer(swipe);
+        }
+        else
+        {
+            var recognizer = new MacOSSwipeGestureRecognizer(swipe);
+            view.AddGestureRecognizer(recognizer);
+        }
     }
 
     static void AddPinchGesture(NSView view, PinchGestureRecognizer pinch)
@@ -221,47 +240,72 @@ internal static class GestureExtensions
 }
 
 /// <summary>
-/// Swipe gesture using NSPanGestureRecognizer with velocity/distance threshold.
+/// Swipe gesture using a single NSPanGestureRecognizer for all directions.
 /// macOS doesn't have a native swipe gesture recognizer for mouse input,
-/// so we detect swipe from pan velocity at the end of the gesture.
+/// so we detect swipe from pan distance and direction at the end of the gesture.
+/// All SwipeGestureRecognizers on the same view share one native recognizer.
 /// </summary>
 internal class MacOSSwipeGestureRecognizer : NSPanGestureRecognizer
 {
-    readonly SwipeGestureRecognizer _swipeGesture;
-    const double SwipeThreshold = 100; // minimum velocity in points/sec
+    readonly List<SwipeGestureRecognizer> _swipeGestures = new();
+    CGPoint _startLocation;
+    const double SwipeDistanceThreshold = 30; // minimum distance in points
 
     public MacOSSwipeGestureRecognizer(SwipeGestureRecognizer swipeGesture)
     {
-        _swipeGesture = swipeGesture;
+        _swipeGestures.Add(swipeGesture);
         Action = new ObjCRuntime.Selector("handleSwipe:");
         Target = this;
+    }
+
+    public void AddSwipeRecognizer(SwipeGestureRecognizer swipeGesture)
+    {
+        _swipeGestures.Add(swipeGesture);
     }
 
     [Foundation.Export("handleSwipe:")]
     void HandleSwipe(NSPanGestureRecognizer recognizer)
     {
-        if (recognizer.State != NSGestureRecognizerState.Ended)
-            return;
-
-        var velocity = recognizer.VelocityInView(recognizer.View);
-        var direction = _swipeGesture.Direction;
-
-        bool matched = false;
-        if (direction.HasFlag(SwipeDirection.Left) && velocity.X < -SwipeThreshold) matched = true;
-        if (direction.HasFlag(SwipeDirection.Right) && velocity.X > SwipeThreshold) matched = true;
-        if (direction.HasFlag(SwipeDirection.Up) && velocity.Y < -SwipeThreshold) matched = true;
-        if (direction.HasFlag(SwipeDirection.Down) && velocity.Y > SwipeThreshold) matched = true;
-
-        if (matched)
+        switch (recognizer.State)
         {
-            _swipeGesture.Command?.Execute(_swipeGesture.CommandParameter);
-            var sendSwiped = typeof(SwipeGestureRecognizer).GetMethod(
-                "SendSwiped", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            if (sendSwiped != null)
-            {
-                var parent = (_swipeGesture as IElement)?.FindParentOfType<View>();
-                try { sendSwiped.Invoke(_swipeGesture, new object?[] { parent, direction }); } catch { }
-            }
+            case NSGestureRecognizerState.Began:
+                _startLocation = recognizer.LocationInView(recognizer.View);
+                break;
+            case NSGestureRecognizerState.Ended:
+                var endLocation = recognizer.LocationInView(recognizer.View);
+                var dx = (double)(endLocation.X - _startLocation.X);
+                var dy = (double)(endLocation.Y - _startLocation.Y);
+
+                SwipeDirection? detectedDir = null;
+                if (Math.Abs(dx) > Math.Abs(dy))
+                {
+                    if (dx < -SwipeDistanceThreshold) detectedDir = SwipeDirection.Left;
+                    else if (dx > SwipeDistanceThreshold) detectedDir = SwipeDirection.Right;
+                }
+                else
+                {
+                    if (dy < -SwipeDistanceThreshold) detectedDir = SwipeDirection.Up;
+                    else if (dy > SwipeDistanceThreshold) detectedDir = SwipeDirection.Down;
+                }
+
+                if (detectedDir.HasValue)
+                {
+                    foreach (var gesture in _swipeGestures)
+                    {
+                        if (gesture.Direction.HasFlag(detectedDir.Value))
+                        {
+                            gesture.Command?.Execute(gesture.CommandParameter);
+                            var sendSwiped = typeof(SwipeGestureRecognizer).GetMethod(
+                                "SendSwiped", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                            if (sendSwiped != null)
+                            {
+                                var parent = (gesture as IElement)?.FindParentOfType<View>();
+                                try { sendSwiped.Invoke(gesture, new object?[] { parent, detectedDir.Value }); } catch { }
+                            }
+                        }
+                    }
+                }
+                break;
         }
     }
 }
@@ -284,10 +328,9 @@ internal class MacOSPinchGestureRecognizer : NSMagnificationGestureRecognizer
     void HandlePinch(NSMagnificationGestureRecognizer recognizer)
     {
         // NSMagnificationGestureRecognizer.Magnification is the delta from 1.0
-        // MAUI PinchGestureRecognizer expects scale relative to 1.0
         var scale = 1.0 + (double)recognizer.Magnification;
-        var origin = recognizer.LocationInView(recognizer.View);
-        var scalePoint = new Point((double)origin.X, (double)origin.Y);
+        // Use center of view as the pinch origin (normalized 0-1)
+        var scalePoint = new Point(0.5, 0.5);
 
         var controller = (IPinchGestureController)_pinchGesture;
         var parent = (_pinchGesture as IElement)?.FindParentOfType<View>();
