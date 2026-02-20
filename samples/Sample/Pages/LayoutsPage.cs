@@ -64,31 +64,7 @@ public class LayoutsPage : ContentPage
 						Stroke = Colors.SlateGray,
 						StrokeThickness = 1,
 						Padding = new Thickness(12),
-						Content = new VerticalStackLayout
-						{
-							Spacing = 8,
-							Children =
-							{
-								new HorizontalStackLayout
-								{
-									Spacing = 8,
-									Children =
-									{
-										ColorBlock("Top-Left", Colors.Salmon, 120),
-										ColorBlock("Top-Right", Colors.SkyBlue, 120),
-									}
-								},
-								new HorizontalStackLayout
-								{
-									Spacing = 8,
-									Children =
-									{
-										ColorBlock("Bottom-Left", Colors.PaleGreen, 120),
-										ColorBlock("Bottom-Right", Colors.Plum, 120),
-									}
-								},
-							}
-						}
+						Content = CreateNestedGrid(),
 					},
 
 					SectionHeader("Bordered Container"),
@@ -203,6 +179,30 @@ public class LayoutsPage : ContentPage
 		FontAttributes = FontAttributes.Bold,
 		TextColor = Colors.DarkSlateGray,
 	};
+
+	static Grid CreateNestedGrid()
+	{
+		var grid = new Grid
+		{
+			RowDefinitions = { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Auto) },
+			ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) },
+			RowSpacing = 8,
+			ColumnSpacing = 8,
+		};
+		var tl = ColorBlock("Top-Left", Colors.Salmon);
+		var tr = ColorBlock("Top-Right", Colors.SkyBlue);
+		var bl = ColorBlock("Bottom-Left", Colors.PaleGreen);
+		var br = ColorBlock("Bottom-Right", Colors.Plum);
+		Grid.SetRow(tl, 0); Grid.SetColumn(tl, 0);
+		Grid.SetRow(tr, 0); Grid.SetColumn(tr, 1);
+		Grid.SetRow(bl, 1); Grid.SetColumn(bl, 0);
+		Grid.SetRow(br, 1); Grid.SetColumn(br, 1);
+		grid.Children.Add(tl);
+		grid.Children.Add(tr);
+		grid.Children.Add(bl);
+		grid.Children.Add(br);
+		return grid;
+	}
 
 	static Border ColorBlock(string text, Color bg, int width = 0)
 	{
