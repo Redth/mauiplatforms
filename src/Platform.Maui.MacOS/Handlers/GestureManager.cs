@@ -28,6 +28,12 @@ public static class GestureManager
                 case PanGestureRecognizer pan:
                     AddPanGesture(platformView, pan);
                     break;
+                case SwipeGestureRecognizer swipe:
+                    AddSwipeGesture(platformView, swipe);
+                    break;
+                case PinchGestureRecognizer pinch:
+                    AddPinchGesture(platformView, pinch);
+                    break;
                 case PointerGestureRecognizer pointer:
                     AddPointerGesture(platformView, pointer);
                     break;
@@ -46,7 +52,7 @@ public static class GestureManager
         var toRemove = new List<NSGestureRecognizer>();
         foreach (var gr in view.GestureRecognizers)
         {
-            if (gr is MacOSTapGestureRecognizer or MacOSPanGestureRecognizer)
+            if (gr is MacOSTapGestureRecognizer or MacOSPanGestureRecognizer or MacOSSwipeGestureRecognizer or MacOSPinchGestureRecognizer)
                 toRemove.Add(gr);
         }
         foreach (var gr in toRemove)
@@ -78,6 +84,18 @@ public static class GestureManager
     static void AddPanGesture(NSView view, PanGestureRecognizer pan)
     {
         var recognizer = new MacOSPanGestureRecognizer(pan);
+        view.AddGestureRecognizer(recognizer);
+    }
+
+    static void AddSwipeGesture(NSView view, SwipeGestureRecognizer swipe)
+    {
+        var recognizer = new MacOSSwipeGestureRecognizer(swipe);
+        view.AddGestureRecognizer(recognizer);
+    }
+
+    static void AddPinchGesture(NSView view, PinchGestureRecognizer pinch)
+    {
+        var recognizer = new MacOSPinchGestureRecognizer(pinch);
         view.AddGestureRecognizer(recognizer);
     }
 
@@ -199,5 +217,93 @@ internal static class GestureExtensions
     {
         if (recognizer is TapGestureRecognizer tap)
             tap.Command?.Execute(tap.CommandParameter);
+    }
+}
+
+/// <summary>
+/// Swipe gesture using NSPanGestureRecognizer with velocity/distance threshold.
+/// macOS doesn't have a native swipe gesture recognizer for mouse input,
+/// so we detect swipe from pan velocity at the end of the gesture.
+/// </summary>
+internal class MacOSSwipeGestureRecognizer : NSPanGestureRecognizer
+{
+    readonly SwipeGestureRecognizer _swipeGesture;
+    const double SwipeThreshold = 100; // minimum velocity in points/sec
+
+    public MacOSSwipeGestureRecognizer(SwipeGestureRecognizer swipeGesture)
+    {
+        _swipeGesture = swipeGesture;
+        Action = new ObjCRuntime.Selector("handleSwipe:");
+        Target = this;
+    }
+
+    [Foundation.Export("handleSwipe:")]
+    void HandleSwipe(NSPanGestureRecognizer recognizer)
+    {
+        if (recognizer.State != NSGestureRecognizerState.Ended)
+            return;
+
+        var velocity = recognizer.VelocityInView(recognizer.View);
+        var direction = _swipeGesture.Direction;
+
+        bool matched = false;
+        if (direction.HasFlag(SwipeDirection.Left) && velocity.X < -SwipeThreshold) matched = true;
+        if (direction.HasFlag(SwipeDirection.Right) && velocity.X > SwipeThreshold) matched = true;
+        if (direction.HasFlag(SwipeDirection.Up) && velocity.Y < -SwipeThreshold) matched = true;
+        if (direction.HasFlag(SwipeDirection.Down) && velocity.Y > SwipeThreshold) matched = true;
+
+        if (matched)
+        {
+            _swipeGesture.Command?.Execute(_swipeGesture.CommandParameter);
+            var sendSwiped = typeof(SwipeGestureRecognizer).GetMethod(
+                "SendSwiped", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (sendSwiped != null)
+            {
+                var parent = (_swipeGesture as IElement)?.FindParentOfType<View>();
+                try { sendSwiped.Invoke(_swipeGesture, new object?[] { parent, direction }); } catch { }
+            }
+        }
+    }
+}
+
+/// <summary>
+/// Pinch gesture using NSMagnificationGestureRecognizer for trackpad pinch-to-zoom.
+/// </summary>
+internal class MacOSPinchGestureRecognizer : NSMagnificationGestureRecognizer
+{
+    readonly PinchGestureRecognizer _pinchGesture;
+
+    public MacOSPinchGestureRecognizer(PinchGestureRecognizer pinchGesture)
+    {
+        _pinchGesture = pinchGesture;
+        Action = new ObjCRuntime.Selector("handlePinch:");
+        Target = this;
+    }
+
+    [Foundation.Export("handlePinch:")]
+    void HandlePinch(NSMagnificationGestureRecognizer recognizer)
+    {
+        // NSMagnificationGestureRecognizer.Magnification is the delta from 1.0
+        // MAUI PinchGestureRecognizer expects scale relative to 1.0
+        var scale = 1.0 + (double)recognizer.Magnification;
+        var origin = recognizer.LocationInView(recognizer.View);
+        var scalePoint = new Point((double)origin.X, (double)origin.Y);
+
+        var controller = (IPinchGestureController)_pinchGesture;
+        var parent = (_pinchGesture as IElement)?.FindParentOfType<View>();
+
+        switch (recognizer.State)
+        {
+            case NSGestureRecognizerState.Began:
+                controller.SendPinchStarted(parent!, scalePoint);
+                break;
+            case NSGestureRecognizerState.Changed:
+                controller.SendPinch(parent!, scale, scalePoint);
+                break;
+            case NSGestureRecognizerState.Ended:
+            case NSGestureRecognizerState.Cancelled:
+                controller.SendPinchEnded(parent!);
+                break;
+        }
     }
 }

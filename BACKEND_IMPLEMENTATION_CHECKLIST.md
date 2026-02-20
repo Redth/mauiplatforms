@@ -88,7 +88,7 @@ Items marked `[x]` have a handler or implementation present; items marked `[~]` 
 | [~] **Slider** | Partial | Maps Value, Minimum, Maximum via `NSSlider`; MinimumTrackColor, MaximumTrackColor, ThumbColor limited by AppKit |
 | [x] **Stepper** | ✅ | Maps Value, Minimum, Maximum, Interval via `NSStepper` |
 | [~] **ProgressBar** | Partial | Maps Progress via `NSProgressIndicator`; ProgressColor via `CIColorMonochrome` content filter |
-| [~] **ActivityIndicator** | Partial | Maps IsRunning (StartAnimation/StopAnimation) via `NSProgressIndicator`; missing Color |
+| [~] **ActivityIndicator** | Partial | Maps IsRunning (StartAnimation/StopAnimation) via `NSProgressIndicator`; Color via `CIColorMonochrome` content filter |
 | [x] **BoxView** | ✅ | Mapped via `ShapeViewHandler` |
 | [~] **Image** | Partial | Maps Source (file/URI/stream), Aspect, IsOpaque via `NSImageView`; missing error/loading callback handling |
 
@@ -147,8 +147,8 @@ Items marked `[x]` have a handler or implementation present; items marked `[~]` 
 |---------|--------|-------|
 | [x] **TapGestureRecognizer** | ✅ | `MacOSTapGestureRecognizer` wrapping `NSClickGestureRecognizer` with NumberOfTapsRequired, Command |
 | [x] **PanGestureRecognizer** | ✅ | `MacOSPanGestureRecognizer` wrapping `NSPanGestureRecognizer` with translation tracking |
-| [ ] **SwipeGestureRecognizer** | ❌ | Needs trackpad swipe detection or custom mouse delta tracking |
-| [ ] **PinchGestureRecognizer** | ❌ | Needs `NSMagnificationGestureRecognizer` for trackpad pinch |
+| [x] **SwipeGestureRecognizer** | ✅ | `MacOSSwipeGestureRecognizer` using `NSPanGestureRecognizer` with velocity threshold for swipe detection |
+| [x] **PinchGestureRecognizer** | ✅ | `MacOSPinchGestureRecognizer` wrapping `NSMagnificationGestureRecognizer` for trackpad pinch-to-zoom |
 | [x] **PointerGestureRecognizer** | ✅ | `MacOSPointerTrackingArea` using `NSTrackingArea` for mouseEntered/mouseExited/mouseMoved |
 
 ---
@@ -370,7 +370,7 @@ FormattedText requires special handling as a compound property using `NSAttribut
 | **Basic Controls** | 12 of 14 | 14 | ImageButton now implemented; Label has full Padding support |
 | **Collection Controls** | 1 of 7 | 7 | Only CollectionView (basic); missing 6 controls |
 | **Input Controls** | 4 of 4 | 4 | All present; Entry/Editor improved with font/spacing |
-| **Gesture Recognizers** | 3 of 5 | 5 | Tap, Pan, Pointer implemented; missing Swipe, Pinch |
+| **Gesture Recognizers** | 5 of 5 | 5 | ✅ All: Tap, Pan, Swipe, Pinch, Pointer |
 | **Shapes** | 1 handler | 6 types | Single ShapeViewHandler covers all shape types |
 | **Essentials** | 15 of 20 | 20 | Missing: Geolocation, Map, SemanticScreenReader, VersionTracking, Vibration |
 | **Dialog Types** | 3 of 3 | 3 | All implemented via NSAlert |
