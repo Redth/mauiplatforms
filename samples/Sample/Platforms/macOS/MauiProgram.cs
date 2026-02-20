@@ -20,7 +20,7 @@ public static class MauiProgram
         builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-        builder.AddMauiDevFlowAgent(opts => opts.Port = 10223);
+        builder.AddMauiDevFlowAgent();
         builder.AddMauiBlazorDevFlowTools();
 #endif
 
