@@ -1,6 +1,7 @@
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Controls;
 using AppKit;
+using CoreGraphics;
 using Foundation;
 
 namespace Microsoft.Maui.Platform.MacOS.Handlers;
@@ -37,6 +38,56 @@ public partial class LabelHandler : MacOSViewHandler<ILabel, NSTextField>
         label.MaximumNumberOfLines = 0;
         return label;
     }
+
+    public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
+    {
+        var platformView = PlatformView;
+        if (platformView == null)
+            return Size.Zero;
+
+        if (double.IsNaN(widthConstraint))
+            widthConstraint = double.PositiveInfinity;
+        if (double.IsNaN(heightConstraint))
+            heightConstraint = double.PositiveInfinity;
+
+        var widthConstrained = !double.IsPositiveInfinity(widthConstraint);
+
+        // Use NSCell.CellSizeForBounds for accurate text measurement
+        // IntrinsicContentSize.Width is -1 for word-wrapping NSTextFields,
+        // and FittingSize is unreliable without Auto Layout, causing truncation.
+        var cell = platformView.Cell;
+        var constraintRect = new CGRect(0, 0,
+            widthConstrained ? (nfloat)widthConstraint : (nfloat)10000,
+            !double.IsPositiveInfinity(heightConstraint) ? (nfloat)heightConstraint : (nfloat)10000);
+        var cellSize = cell.CellSizeForBounds(constraintRect);
+
+        var measuredWidth = Math.Ceiling((double)cellSize.Width);
+        var measuredHeight = Math.Ceiling((double)cellSize.Height);
+
+        if (widthConstrained)
+            measuredWidth = Math.Min(measuredWidth, widthConstraint);
+
+        // Apply explicit MAUI dimensions
+        var vw = VirtualView;
+        if (IsExplicitSize(vw.Width))
+            measuredWidth = vw.Width;
+        if (IsExplicitSize(vw.Height))
+            measuredHeight = vw.Height;
+
+        if (IsExplicitSize(vw.MinimumWidth))
+            measuredWidth = Math.Max(measuredWidth, vw.MinimumWidth);
+        if (IsExplicitSize(vw.MinimumHeight))
+            measuredHeight = Math.Max(measuredHeight, vw.MinimumHeight);
+        if (IsExplicitSize(vw.MaximumWidth))
+            measuredWidth = Math.Min(measuredWidth, vw.MaximumWidth);
+        if (IsExplicitSize(vw.MaximumHeight))
+            measuredHeight = Math.Min(measuredHeight, vw.MaximumHeight);
+
+        return new Size(measuredWidth, measuredHeight);
+    }
+
+    static bool IsExplicitSize(double value)
+        => !double.IsNaN(value) && value >= 0 && !double.IsPositiveInfinity(value);
 
     public static void MapText(LabelHandler handler, ILabel label)
     {
