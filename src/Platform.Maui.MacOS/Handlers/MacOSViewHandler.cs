@@ -58,6 +58,40 @@ public abstract class MacOSViewHandler<TVirtualView, TPlatformView> : ViewHandle
     {
     }
 
+    protected override void ConnectHandler(TPlatformView platformView)
+    {
+        base.ConnectHandler(platformView);
+        SetupGestures(platformView);
+
+        if (VirtualView is Microsoft.Maui.Controls.View mauiView)
+        {
+            ((System.Collections.Specialized.INotifyCollectionChanged)mauiView.GestureRecognizers)
+                .CollectionChanged += OnGestureRecognizersChanged;
+        }
+    }
+
+    protected override void DisconnectHandler(TPlatformView platformView)
+    {
+        if (VirtualView is Microsoft.Maui.Controls.View mauiView)
+        {
+            ((System.Collections.Specialized.INotifyCollectionChanged)mauiView.GestureRecognizers)
+                .CollectionChanged -= OnGestureRecognizersChanged;
+        }
+        base.DisconnectHandler(platformView);
+    }
+
+    void OnGestureRecognizersChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (PlatformView != null)
+            SetupGestures(PlatformView);
+    }
+
+    void SetupGestures(NSView platformView)
+    {
+        if (VirtualView is IView view)
+            GestureManager.SetupGestures(platformView, view);
+    }
+
     public static new void MapShadow(IViewHandler handler, IView view)
     {
         var platformView = handler.PlatformView as NSView;
