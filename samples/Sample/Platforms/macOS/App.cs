@@ -22,78 +22,132 @@ class MacOSApp : Application
 
 class MainShell : FlyoutPage
 {
-	private readonly (string name, Func<Page> factory)[] _pages =
+	private readonly (string icon, string name, Func<Page> factory)[] _pages =
 	[
-		("🏠 Home", () => new HomePage()),
-		("🎛️ Controls", () => new ControlsPage()),
-		("📅 Pickers & Search", () => new PickersPage()),
-		("📐 Layouts", () => new LayoutsPage()),
-		("💬 Alerts & Dialogs", () => new AlertsPage()),
-		("📋 Collection View", () => new Pages.CollectionViewPage()),
-		("🎨 Graphics", () => new GraphicsPage()),
-		("📱 Device & App Info", () => new DeviceInfoPage()),
-		("🔋 Battery & Network", () => new BatteryNetworkPage()),
-		("📋 Clipboard & Storage", () => new ClipboardPrefsPage()),
-		("🚀 Launch & Share", () => new LaunchSharePage()),
+		("🏠", "Home", () => new HomePage()),
+		("🎛️", "Controls", () => new ControlsPage()),
+		("📅", "Pickers & Search", () => new PickersPage()),
+		("📐", "Layouts", () => new LayoutsPage()),
+		("💬", "Alerts & Dialogs", () => new AlertsPage()),
+		("📋", "Collection View", () => new Pages.CollectionViewPage()),
+		("🎨", "Graphics", () => new GraphicsPage()),
+		("📱", "Device & App Info", () => new DeviceInfoPage()),
+		("🔋", "Battery & Network", () => new BatteryNetworkPage()),
+		("📋", "Clipboard & Storage", () => new ClipboardPrefsPage()),
+		("🚀", "Launch & Share", () => new LaunchSharePage()),
 #if MACAPP
-		("🌐 Blazor Hybrid", () => new Pages.BlazorPage()),
+		("🌐", "Blazor Hybrid", () => new Pages.BlazorPage()),
 #endif
-		("🧭 Navigation", () => new NavigationPage(new NavigationDemoPage())),
-		("📑 TabbedPage", () => new TabbedPageDemo()),
-		("📂 FlyoutPage", () => new Pages.FlyoutPageDemo()),
-		("🗺️ Map", () => new Pages.MapPage()),
+		("🧭", "Navigation", () => new NavigationPage(new NavigationDemoPage())),
+		("📑", "TabbedPage", () => new TabbedPageDemo()),
+		("📂", "FlyoutPage", () => new Pages.FlyoutPageDemo()),
+		("🗺️", "Map", () => new Pages.MapPage()),
 	];
+
+	View? _selectedItem;
 
 	public MainShell()
 	{
-		Title = "Microsoft.Maui.Platform.MacOS Demo";
+		Title = "macOS Demo App";
+		FlyoutLayoutBehavior = FlyoutLayoutBehavior.Split;
 
-		var menuStack = new VerticalStackLayout { Spacing = 0 };
-
-		menuStack.Children.Add(new Label
+		var menuStack = new VerticalStackLayout
 		{
-			Text = "🍎 Microsoft.Maui.Platform.MacOS",
-			FontSize = 20,
-			FontAttributes = FontAttributes.Bold,
-			TextColor = Colors.DodgerBlue,
-			Padding = new Thickness(16, 20, 16, 4),
-		});
+			Spacing = 2,
+			Padding = new Thickness(8, 8),
+			BackgroundColor = Color.FromArgb("#F0F0F0"),
+		};
+
 		menuStack.Children.Add(new Label
 		{
 			Text = "macOS Demo App",
-			FontSize = 12,
-			TextColor = Colors.Gray,
-			Padding = new Thickness(16, 0, 16, 12),
+			FontSize = 11,
+			FontAttributes = FontAttributes.Bold,
+			TextColor = Color.FromArgb("#888888"),
+			Padding = new Thickness(8, 6, 8, 6),
 		});
-		menuStack.Children.Add(new BoxView { HeightRequest = 1, Color = Colors.LightGray });
 
-		foreach (var (name, factory) in _pages)
+		bool first = true;
+		foreach (var (icon, name, factory) in _pages)
 		{
-			var btn = new Button
+			var item = CreateSidebarItem(icon, name, factory);
+			menuStack.Children.Add(item);
+			if (first)
 			{
-				Text = name,
-				FontSize = 14,
-				HorizontalOptions = LayoutOptions.Fill,
-			};
-			var capturedFactory = factory;
-			btn.Clicked += (s, e) =>
-			{
-				var page = capturedFactory();
-				if (page is ContentPage cp)
-					Detail = new NavigationPage(cp);
-				else
-					Detail = page;
-			};
-			menuStack.Children.Add(btn);
+				SetSelected(item);
+				first = false;
+			}
 		}
 
 		Flyout = new ContentPage
 		{
 			Title = "Menu",
+			BackgroundColor = Color.FromArgb("#F0F0F0"),
 			Content = new ScrollView { Content = menuStack },
 		};
 
 		Detail = new NavigationPage(new HomePage());
 		IsPresented = true;
+	}
+
+	View CreateSidebarItem(string icon, string name, Func<Page> factory)
+	{
+		var container = new HorizontalStackLayout
+		{
+			Spacing = 6,
+			Padding = new Thickness(10, 5),
+			HorizontalOptions = LayoutOptions.Fill,
+		};
+
+		container.Children.Add(new Label
+		{
+			Text = icon,
+			FontSize = 13,
+			VerticalOptions = LayoutOptions.Center,
+			WidthRequest = 20,
+			HorizontalTextAlignment = TextAlignment.Center,
+		});
+
+		container.Children.Add(new Label
+		{
+			Text = name,
+			FontSize = 13,
+			TextColor = Color.FromArgb("#333333"),
+			VerticalOptions = LayoutOptions.Center,
+		});
+
+		var tap = new TapGestureRecognizer();
+		var capturedFactory = factory;
+		tap.Tapped += (s, e) =>
+		{
+			SetSelected(container);
+			var page = capturedFactory();
+			if (page is ContentPage cp)
+				Detail = new NavigationPage(cp);
+			else
+				Detail = page;
+		};
+		container.GestureRecognizers.Add(tap);
+
+		return container;
+	}
+
+	void SetSelected(View item)
+	{
+		if (_selectedItem is HorizontalStackLayout oldHsl)
+		{
+			oldHsl.BackgroundColor = Colors.Transparent;
+			if (oldHsl.Children.Count > 1 && oldHsl.Children[1] is Label oldLabel)
+				oldLabel.TextColor = Color.FromArgb("#333333");
+		}
+
+		if (item is HorizontalStackLayout newHsl)
+		{
+			newHsl.BackgroundColor = Color.FromArgb("#0078D4");
+			if (newHsl.Children.Count > 1 && newHsl.Children[1] is Label newLabel)
+				newLabel.TextColor = Colors.White;
+		}
+
+		_selectedItem = item;
 	}
 }
