@@ -9,6 +9,11 @@ public class MacOSContainerView : NSView
     public Func<double, double, Graphics.Size>? CrossPlatformMeasure { get; set; }
     public Func<Graphics.Rect, Graphics.Size>? CrossPlatformArrange { get; set; }
 
+    /// When true, HitTest returns this view for clicks on children so that
+    /// NSGestureRecognizers attached here receive the events (AppKit only
+    /// delivers events to the gesture recognizer's own view, not ancestors).
+    public bool InterceptChildHitTesting { get; set; }
+
     public MacOSContainerView()
     {
         WantsLayer = true;
@@ -16,6 +21,19 @@ public class MacOSContainerView : NSView
 
     // NSView defaults to bottom-left origin; MAUI needs top-left
     public override bool IsFlipped => true;
+
+    public override NSView? HitTest(CGPoint point)
+    {
+        if (InterceptChildHitTesting)
+        {
+            // Return this view (not a child) if the point is inside our bounds,
+            // so our gesture recognizers receive the event.
+            var local = ConvertPointFromView(point, Superview);
+            if (Bounds.Contains(local))
+                return this;
+        }
+        return base.HitTest(point);
+    }
 
     /// <summary>
     /// NSView has no SizeThatFits — we provide our own for the base handler to call.

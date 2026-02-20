@@ -37,6 +37,9 @@ public static class GestureManager
 
     static void ClearManagedGestures(NSView view)
     {
+        if (view is MacOSContainerView container)
+            container.InterceptChildHitTesting = false;
+
         if (view.GestureRecognizers == null)
             return;
 
@@ -64,6 +67,12 @@ public static class GestureManager
             NumberOfClicksRequired = (nint)tap.NumberOfTapsRequired,
         };
         view.AddGestureRecognizer(recognizer);
+
+        // AppKit delivers events only to the hit-test view's own gesture recognizers,
+        // not ancestors. Intercept child hit testing so clicks on child views
+        // (e.g. Label NSTextFields) still fire this view's gesture recognizer.
+        if (view is MacOSContainerView container)
+            container.InterceptChildHitTesting = true;
     }
 
     static void AddPanGesture(NSView view, PanGestureRecognizer pan)
@@ -94,8 +103,19 @@ internal class MacOSTapGestureRecognizer : NSClickGestureRecognizer
     void HandleTap(NSGestureRecognizer recognizer)
     {
         _tapGesture.Command?.Execute(_tapGesture.CommandParameter);
-        if (_tapGesture is IElement element)
-            ((IGestureRecognizer)_tapGesture).SendTapped(element.FindParentOfType<View>());
+
+        // TapGestureRecognizer.SendTapped is internal in MAUI — invoke via reflection
+        var sendTapped = typeof(TapGestureRecognizer).GetMethod(
+            "SendTapped", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        if (sendTapped != null)
+        {
+            var parent = (_tapGesture as IElement)?.FindParentOfType<View>();
+            var parameters = sendTapped.GetParameters();
+            if (parameters.Length == 1)
+                sendTapped.Invoke(_tapGesture, new object?[] { parent });
+            else if (parameters.Length == 2)
+                sendTapped.Invoke(_tapGesture, new object?[] { parent, null });
+        }
     }
 }
 
