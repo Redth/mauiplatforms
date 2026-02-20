@@ -18,7 +18,7 @@ public class GraphicsPage : ContentPage
 				Children =
 				{
 					new Label { Text = "GraphicsView (CoreGraphics)", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					new Label { Text = "Basic Shapes", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					new GraphicsView { HeightRequest = 140, Drawable = new ShapesDrawable() },

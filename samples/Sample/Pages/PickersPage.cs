@@ -54,25 +54,25 @@ public class PickersPage : ContentPage
 				Children =
 				{
 					new Label { Text = "Pickers & Search", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					new Label { Text = "DatePicker", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					datePicker,
 					dateLabel,
 
-					new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 
 					new Label { Text = "TimePicker", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					timePicker,
 					timeLabel,
 
-					new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 
 					new Label { Text = "Picker (Dropdown)", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					picker,
 					pickerLabel,
 
-					new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 
 					new Label { Text = "SearchBar", FontSize = 16, FontAttributes = FontAttributes.Bold },
 					searchBar,

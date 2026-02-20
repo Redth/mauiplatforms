@@ -19,7 +19,7 @@ public class ShapesPage : ContentPage
 				Children =
 				{
 					new Label { Text = "MAUI Shape Views", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					SectionHeader("Rectangle"),
 					new Rectangle
@@ -161,5 +161,5 @@ public class ShapesPage : ContentPage
 		TextColor = Colors.DarkSlateGray,
 	};
 
-	static BoxView Separator() => new() { HeightRequest = 1, Color = Colors.LightGray };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 };
 }

@@ -36,10 +36,11 @@ public class FlyoutDemoPage : FlyoutPage
                             FontSize = 24,
                             FontAttributes = FontAttributes.Bold,
                         }.WithPrimaryText(),
-                        new BoxView
+                        new Border
                         {
-                            Color = AppColors.AccentBlue,
+                            BackgroundColor = AppColors.AccentBlue,
                             HeightRequest = 2,
+                            StrokeThickness = 0,
                         },
                         homeButton,
                         settingsButton,
@@ -67,12 +68,14 @@ public class FlyoutDemoPage : FlyoutPage
                 HorizontalOptions = LayoutOptions.Center,
                 Children =
                 {
-                    new BoxView
+                    new Border
                     {
-                        Color = Color.FromArgb(accentColor),
+                        BackgroundColor = Color.FromArgb(accentColor),
                         HeightRequest = 4,
                         WidthRequest = 200,
                         HorizontalOptions = LayoutOptions.Center,
+                        StrokeThickness = 0,
+                        StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 2 },
                     },
                     new Label
                     {

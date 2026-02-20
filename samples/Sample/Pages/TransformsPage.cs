@@ -9,12 +9,14 @@ public class TransformsPage : ContentPage
 	{
 		Title = "Transforms";
 
-		var targetBox = new BoxView
+		var targetBox = new Border
 		{
-			Color = Colors.DodgerBlue,
+			BackgroundColor = Colors.DodgerBlue,
 			WidthRequest = 100,
 			HeightRequest = 100,
 			HorizontalOptions = LayoutOptions.Center,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 
 		var statusLabel = new Label
@@ -73,12 +75,14 @@ public class TransformsPage : ContentPage
 		};
 
 		// Anchor demo
-		var anchorBox = new BoxView
+		var anchorBox = new Border
 		{
-			Color = Colors.MediumPurple,
+			BackgroundColor = Colors.MediumPurple,
 			WidthRequest = 80,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Center,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		var anchorLabel = new Label { Text = "Anchor: (0.5, 0.5) — center", FontSize = 14, HorizontalOptions = LayoutOptions.Center };
 
@@ -113,12 +117,14 @@ public class TransformsPage : ContentPage
 		};
 
 		// Composite animation
-		var compositeBox = new BoxView
+		var compositeBox = new Border
 		{
-			Color = Colors.Coral,
+			BackgroundColor = Colors.Coral,
 			WidthRequest = 80,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Center,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 
 		var compositeBtn = new Button { Text = "Run Composite Animation" };
@@ -149,7 +155,7 @@ public class TransformsPage : ContentPage
 				Children =
 				{
 					new Label { Text = "Transforms & Animations", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					statusLabel,
 
@@ -194,5 +200,5 @@ public class TransformsPage : ContentPage
 		TextColor = Colors.DarkSlateGray,
 	};
 
-	static BoxView Separator() => new() { HeightRequest = 1, Color = Colors.LightGray };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 };
 }

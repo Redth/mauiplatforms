@@ -11,12 +11,14 @@ public class GesturesPage : ContentPage
 
 		// Tap gesture demo
 		int tapCount = 0;
-		var tapBox = new BoxView
+		var tapBox = new Border
 		{
-			Color = Colors.DodgerBlue,
+			BackgroundColor = Colors.DodgerBlue,
 			WidthRequest = 120,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		var tapLabel = new Label { Text = "Tap the box! Taps: 0", FontSize = 14 };
 		var tapGesture = new TapGestureRecognizer();
@@ -24,18 +26,20 @@ public class GesturesPage : ContentPage
 		{
 			tapCount++;
 			tapLabel.Text = $"Tap the box! Taps: {tapCount}";
-			tapBox.Color = tapCount % 2 == 0 ? Colors.DodgerBlue : Colors.Coral;
+			tapBox.BackgroundColor = tapCount % 2 == 0 ? Colors.DodgerBlue : Colors.Coral;
 		};
 		tapBox.GestureRecognizers.Add(tapGesture);
 
 		// Pan gesture demo
 		double panTotalX = 0, panTotalY = 0;
-		var panBox = new BoxView
+		var panBox = new Border
 		{
-			Color = Colors.MediumSeaGreen,
+			BackgroundColor = Colors.MediumSeaGreen,
 			WidthRequest = 80,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		// Container so pan gesture area doesn't move with the visual transform
 		var panContainer = new Grid
@@ -76,12 +80,14 @@ public class GesturesPage : ContentPage
 			FontAttributes = FontAttributes.Bold,
 			TextColor = Colors.DodgerBlue,
 		};
-		var swipeBox = new BoxView
+		var swipeBox = new Border
 		{
-			Color = Color.FromArgb("#E8F0FE"),
+			BackgroundColor = Color.FromArgb("#E8F0FE"),
 			WidthRequest = 300,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		foreach (var dir in new[] { SwipeDirection.Left, SwipeDirection.Right, SwipeDirection.Up, SwipeDirection.Down })
 		{
@@ -91,12 +97,14 @@ public class GesturesPage : ContentPage
 		}
 
 		// Pinch gesture demo
-		var pinchBox = new BoxView
+		var pinchBox = new Border
 		{
-			Color = Colors.MediumPurple,
+			BackgroundColor = Colors.MediumPurple,
 			WidthRequest = 100,
 			HeightRequest = 100,
 			HorizontalOptions = LayoutOptions.Start,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		var pinchLabel = new Label { Text = "Scale: 1.00", FontSize = 14 };
 		double currentScale = 1;
@@ -117,24 +125,26 @@ public class GesturesPage : ContentPage
 		pinchBox.GestureRecognizers.Add(pinchGesture);
 
 		// Pointer gesture demo
-		var pointerBox = new BoxView
+		var pointerBox = new Border
 		{
-			Color = Colors.SteelBlue,
+			BackgroundColor = Colors.SteelBlue,
 			WidthRequest = 150,
 			HeightRequest = 80,
 			HorizontalOptions = LayoutOptions.Start,
+			StrokeThickness = 0,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 		};
 		var pointerLabel = new Label { Text = "Hover over the box", FontSize = 14 };
 		var pointerGesture = new PointerGestureRecognizer();
 		pointerGesture.PointerEntered += (s, e) =>
 		{
 			pointerLabel.Text = "Pointer: Entered";
-			pointerBox.Color = Colors.Orange;
+			pointerBox.BackgroundColor = Colors.Orange;
 		};
 		pointerGesture.PointerExited += (s, e) =>
 		{
 			pointerLabel.Text = "Pointer: Exited";
-			pointerBox.Color = Colors.SteelBlue;
+			pointerBox.BackgroundColor = Colors.SteelBlue;
 		};
 		pointerGesture.PointerMoved += (s, e) =>
 		{
@@ -152,7 +162,7 @@ public class GesturesPage : ContentPage
 				Children =
 				{
 					new Label { Text = "Gesture Recognizers", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					SectionHeader("TapGestureRecognizer"),
 					tapLabel,
@@ -195,5 +205,5 @@ public class GesturesPage : ContentPage
 		TextColor = Colors.DarkSlateGray,
 	};
 
-	static BoxView Separator() => new() { HeightRequest = 1, Color = Colors.LightGray };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 };
 }

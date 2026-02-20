@@ -61,9 +61,9 @@ public class CollectionViewPage : ContentPage
 			Children =
 			{
 				new Label { Text = "CollectionView", FontSize = 24, FontAttributes = FontAttributes.Bold },
-				new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+				new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 				tabs,
-				new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 				contentArea,
 			}
 		};
@@ -117,7 +117,7 @@ public class CollectionViewPage : ContentPage
 				selectedLabel.TextColor = Colors.DodgerBlue;
 			};
 			stack.Children.Add(btn);
-			stack.Children.Add(new BoxView { HeightRequest = 1, Color = Color.FromArgb("#f0f0f0") });
+			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Color.FromArgb("#f0f0f0"), StrokeThickness = 0 });
 		}
 	}
 
@@ -297,7 +297,7 @@ public class CollectionViewPage : ContentPage
 			};
 
 			stack.Children.Add(row);
-			stack.Children.Add(new BoxView { HeightRequest = 1, Color = Color.FromArgb("#f0f0f0") });
+			stack.Children.Add(new Border { HeightRequest = 1, BackgroundColor = Color.FromArgb("#f0f0f0"), StrokeThickness = 0 });
 		}
 
 		selectAllBox.CheckedChanged += (s, e) =>
@@ -329,7 +329,7 @@ public class CollectionViewPage : ContentPage
 				new Label { Text = "Task List", FontSize = 16, FontAttributes = FontAttributes.Bold },
 				selectionLabel,
 				selectAllRow,
-				new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 				new ScrollView { HeightRequest = 320, Content = stack },
 				deleteBtn,
 			}

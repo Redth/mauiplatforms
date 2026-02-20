@@ -19,13 +19,14 @@ public class LayoutsPage : ContentPage
 				Children =
 				{
 					new Label { Text = "Layout Demos", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					SectionHeader("VerticalStackLayout"),
 					new Border
 					{
 						Stroke = Colors.SlateGray,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(12),
 						Content = new VerticalStackLayout
 						{
@@ -44,6 +45,7 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.SlateGray,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(12),
 						Content = new HorizontalStackLayout
 						{
@@ -63,6 +65,7 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.SlateGray,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(12),
 						Content = CreateNestedGrid(),
 					},
@@ -72,6 +75,7 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.DarkOrange,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(16),
 						Content = new VerticalStackLayout
 						{
@@ -89,6 +93,7 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.MediumPurple,
 						StrokeThickness = 2,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(16),
 						Content = new HorizontalStackLayout
 						{
@@ -113,7 +118,7 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.DodgerBlue,
 						StrokeThickness = 2,
-						StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(12) },
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(12) },
 						Padding = new Thickness(16),
 						Content = new Label { Text = "Uniform 12px corners", FontSize = 14 }
 					},
@@ -122,7 +127,7 @@ public class LayoutsPage : ContentPage
 						Stroke = Colors.MediumPurple,
 						StrokeThickness = 2,
 						BackgroundColor = Colors.MediumPurple.WithAlpha(0.1f),
-						StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(20, 4, 20, 4) },
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(20, 4, 20, 4) },
 						Padding = new Thickness(16),
 						Content = new Label { Text = "Asymmetric corners (20/4/20/4)", FontSize = 14 }
 					},
@@ -131,7 +136,7 @@ public class LayoutsPage : ContentPage
 						Stroke = Colors.Transparent,
 						StrokeThickness = 0,
 						BackgroundColor = Colors.Teal,
-						StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(24) },
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(24) },
 						Padding = new Thickness(20),
 						Content = new Label { Text = "Pill-style rounded", FontSize = 14, TextColor = Colors.White, HorizontalTextAlignment = TextAlignment.Center }
 					},
@@ -141,21 +146,25 @@ public class LayoutsPage : ContentPage
 					{
 						Stroke = Colors.Red,
 						StrokeThickness = 2,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Padding = new Thickness(8),
 						Content = new Border
 						{
 							Stroke = Colors.Orange,
 							StrokeThickness = 2,
+							StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 							Padding = new Thickness(8),
 							Content = new Border
 							{
 								Stroke = Colors.Green,
 								StrokeThickness = 2,
+								StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 								Padding = new Thickness(8),
 								Content = new Border
 								{
 									Stroke = Colors.Blue,
 									StrokeThickness = 2,
+									StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 									Padding = new Thickness(12),
 									Content = new Label
 									{
@@ -212,7 +221,7 @@ public class LayoutsPage : ContentPage
 			Padding = new Thickness(12, 8),
 			Stroke = bg,
 			StrokeThickness = 0,
-			StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(6) },
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(6) },
 			Content = new Label
 			{
 				Text = text,

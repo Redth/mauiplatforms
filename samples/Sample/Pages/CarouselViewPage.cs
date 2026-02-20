@@ -139,7 +139,7 @@ public class CarouselViewPage : ContentPage
 			Children =
 			{
 				new Label { Text = "CarouselView", FontSize = 24, FontAttributes = FontAttributes.Bold },
-				new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+				new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 				carousel,
 				dotsLayout,
 				positionLabel,

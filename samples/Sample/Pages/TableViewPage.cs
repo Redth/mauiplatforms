@@ -58,7 +58,7 @@ public class TableViewPage : ContentPage
 			}
 		};
 
-		var divider = new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue };
+		var divider = new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 };
 		Grid.SetRow(divider, 1);
 		((Grid)Content).Children.Add(divider);
 
@@ -70,6 +70,7 @@ public class TableViewPage : ContentPage
 		{
 			Stroke = Colors.LightGray,
 			StrokeThickness = 1,
+			StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 			Content = tableView,
 		};
 		Grid.SetRow(border, 3);

@@ -58,7 +58,7 @@ public class ControlsPage : ContentPage
 				Children =
 				{
 					new Label { Text = "Interactive Controls", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					SectionHeader("Button & ProgressBar"),
 					button,
@@ -125,5 +125,5 @@ public class ControlsPage : ContentPage
 		TextColor = Colors.DarkSlateGray,
 	};
 
-	static BoxView Separator() => new() { HeightRequest = 1, Color = Colors.LightGray };
+	static Border Separator() => new() { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 };
 }

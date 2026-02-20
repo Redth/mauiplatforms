@@ -117,6 +117,7 @@ public class NavigationDemoPage : ContentPage
 				{
 					Stroke = DepthColor(depth),
 					StrokeThickness = 2,
+					StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 					Padding = new Thickness(16),
 					Content = new VerticalStackLayout
 					{
@@ -146,7 +147,7 @@ public class NavigationDemoPage : ContentPage
 				pushNoNavBarButton,
 				pushModalButton,
 
-				new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+				new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 
 				new Label
 				{

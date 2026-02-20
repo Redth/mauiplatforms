@@ -92,25 +92,27 @@ public class ListViewPage : ContentPage
 				Children =
 				{
 					new Label { Text = "ListView", FontSize = 24, FontAttributes = FontAttributes.Bold },
-					new BoxView { HeightRequest = 2, Color = Colors.DodgerBlue },
+					new Border { HeightRequest = 2, BackgroundColor = Colors.DodgerBlue, StrokeThickness = 0 },
 
 					new Label { Text = "ViewCell with DataTemplate", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.DarkSlateGray },
 					new Border
 					{
 						Stroke = Colors.LightGray,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Content = listView,
 						HeightRequest = 350,
 					},
 					selectedLabel,
 
-					new BoxView { HeightRequest = 1, Color = Colors.LightGray },
+					new Border { HeightRequest = 1, BackgroundColor = Colors.LightGray, StrokeThickness = 0 },
 
 					new Label { Text = "TextCell ListView", FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Colors.DarkSlateGray },
 					new Border
 					{
 						Stroke = Colors.LightGray,
 						StrokeThickness = 1,
+						StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
 						Content = textCellListView,
 						HeightRequest = 200,
 					},
