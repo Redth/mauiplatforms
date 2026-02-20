@@ -42,6 +42,8 @@ public abstract class MacOSViewHandler<TVirtualView, TPlatformView> : ViewHandle
                 mapper[nameof(IView.AnchorX)] = MapTransform;
                 mapper[nameof(IView.AnchorY)] = MapTransform;
                 mapper[nameof(IView.InputTransparent)] = MapInputTransparent;
+                mapper[nameof(IView.ZIndex)] = MapZIndex;
+                mapper["ContextFlyout"] = MapContextFlyout;
                 mapper["ToolTipProperties.Text"] = MapToolTip;
             }
         }
@@ -247,6 +249,49 @@ public abstract class MacOSViewHandler<TVirtualView, TPlatformView> : ViewHandle
         {
             var tooltip = Microsoft.Maui.Controls.ToolTipProperties.GetText(mauiView);
             platformView.ToolTip = tooltip?.ToString() ?? string.Empty;
+        }
+    }
+
+    public static void MapZIndex(IViewHandler handler, IView view)
+    {
+        if (handler.PlatformView is NSView platformView)
+        {
+            platformView.WantsLayer = true;
+            if (platformView.Layer != null)
+                platformView.Layer.ZPosition = view.ZIndex;
+        }
+    }
+
+    public static void MapContextFlyout(IViewHandler handler, IView view)
+    {
+        if (handler.PlatformView is not NSView platformView || view is not Microsoft.Maui.Controls.View mauiView)
+            return;
+
+        var flyout = Microsoft.Maui.Controls.FlyoutBase.GetContextFlyout(mauiView);
+        if (flyout is Microsoft.Maui.Controls.MenuFlyout menuFlyout)
+        {
+            var menu = new NSMenu();
+            foreach (var item in menuFlyout)
+            {
+                if (item is Microsoft.Maui.Controls.MenuFlyoutItem menuItem)
+                {
+                    var nsItem = new NSMenuItem(menuItem.Text ?? string.Empty, (s, e) =>
+                    {
+                        menuItem.Command?.Execute(menuItem.CommandParameter);
+                    });
+                    nsItem.Enabled = menuItem.IsEnabled;
+                    menu.AddItem(nsItem);
+                }
+                else if (item is Microsoft.Maui.Controls.MenuFlyoutSeparator)
+                {
+                    menu.AddItem(NSMenuItem.SeparatorItem);
+                }
+            }
+            platformView.Menu = menu;
+        }
+        else
+        {
+            platformView.Menu = null;
         }
     }
 

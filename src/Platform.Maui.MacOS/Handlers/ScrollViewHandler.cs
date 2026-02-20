@@ -1,4 +1,5 @@
 using CoreGraphics;
+using CoreAnimation;
 using Foundation;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Handlers;
@@ -101,8 +102,10 @@ public partial class ScrollViewHandler : MacOSViewHandler<IScrollView, NSScrollV
             }
             else
             {
-                // NSScrollView animated scroll
-                handler.PlatformView.ContentView.ScrollToPoint(point);
+                NSAnimationContext.BeginGrouping();
+                NSAnimationContext.CurrentContext.Duration = 0.3;
+                ((NSClipView)handler.PlatformView.ContentView.Animator).SetBoundsOrigin(point);
+                NSAnimationContext.EndGrouping();
                 handler.PlatformView.ReflectScrolledClipView(handler.PlatformView.ContentView);
             }
             scrollView.ScrollFinished();

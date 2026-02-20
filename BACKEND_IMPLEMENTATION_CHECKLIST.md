@@ -65,7 +65,7 @@ Items marked `[x]` have a handler or implementation present; items marked `[~]` 
 | [x] **Grid** | ✅ | Row/column definitions, spans, spacing — all computed by MAUI layout manager |
 | [x] **FlexLayout** | ✅ | Direction, Wrap, JustifyContent, AlignItems — MAUI layout manager handles positioning |
 | [x] **AbsoluteLayout** | ✅ | Absolute and proportional positioning — MAUI layout manager computes bounds |
-| [~] **ScrollView** | Partial | Maps Content, Orientation, ScrollBarVisibility, ContentSize via `NSScrollView`; missing `ScrollToAsync` APIs, scroll position tracking, `Scrolled` event |
+| [~] **ScrollView** | Partial | Maps Content, Orientation, ScrollBarVisibility, ContentSize via `NSScrollView`; ScrollToAsync with animated scrolling via `NSAnimationContext`; missing scroll position tracking, `Scrolled` event |
 | [x] **ContentView** | ✅ | Simple content wrapper with Background support |
 | [x] **Border** | ✅ | Full stroke/shape support — Stroke, StrokeThickness, StrokeShape, StrokeLineCap, StrokeLineJoin, StrokeDashPattern |
 | [ ] **Frame** | ❌ | Legacy border container — no dedicated handler (may fall back to Border) |
@@ -87,7 +87,7 @@ Items marked `[x]` have a handler or implementation present; items marked `[~]` 
 | [~] **RadioButton** | Partial | Maps IsChecked, TextColor, Content text; missing GroupName mutual exclusion, ControlTemplate support |
 | [~] **Slider** | Partial | Maps Value, Minimum, Maximum via `NSSlider`; MinimumTrackColor, MaximumTrackColor, ThumbColor limited by AppKit |
 | [x] **Stepper** | ✅ | Maps Value, Minimum, Maximum, Interval via `NSStepper` |
-| [~] **ProgressBar** | Partial | Maps Progress via `NSProgressIndicator`; missing ProgressColor |
+| [~] **ProgressBar** | Partial | Maps Progress via `NSProgressIndicator`; ProgressColor via `CIColorMonochrome` content filter |
 | [~] **ActivityIndicator** | Partial | Maps IsRunning (StartAnimation/StopAnimation) via `NSProgressIndicator`; missing Color |
 | [x] **BoxView** | ✅ | Mapped via `ShapeViewHandler` |
 | [~] **Image** | Partial | Maps Source (file/URI/stream), Aspect, IsOpaque via `NSImageView`; missing error/loading callback handling |
@@ -194,7 +194,7 @@ Every handler must support these properties mapped from the base `IView` in `Mac
 - [x] Margin
 - [x] Padding (for views implementing IPadding)
 - [x] FlowDirection (LTR, RTL) → `NSView.UserInterfaceLayoutDirection`
-- [ ] ZIndex → `NSView` subview ordering or `layer.zPosition`
+- [x] ZIndex → `NSView` `layer.zPosition`
 
 ### Appearance
 - [x] BackgroundColor — mapped in base `MacOSViewHandler.MapBackground` via `CALayer.BackgroundColor`
@@ -202,7 +202,7 @@ Every handler must support these properties mapped from the base `IView` in `Mac
 
 ### Interactivity Attachments
 - [x] **ToolTip** — `ToolTipProperties.Text` → `NSView.ToolTip`
-- [ ] **ContextFlyout** — `FlyoutBase.GetContextFlyout()` → `NSMenu` on right-click
+- [x] **ContextFlyout** — `FlyoutBase.GetContextFlyout()` → `NSMenu` on right-click
 
 ### Transforms
 - [x] TranslationX / TranslationY → `CATransform3D` via `MapTransform`
