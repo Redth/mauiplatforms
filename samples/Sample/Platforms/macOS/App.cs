@@ -54,7 +54,7 @@ class MainShell : FlyoutPage
 		var menuStack = new VerticalStackLayout
 		{
 			Spacing = 2,
-			Padding = new Thickness(8, 8),
+			Padding = new Thickness(0, 8),
 			BackgroundColor = Color.FromArgb("#F0F0F0"),
 		};
 
@@ -64,7 +64,7 @@ class MainShell : FlyoutPage
 			FontSize = 11,
 			FontAttributes = FontAttributes.Bold,
 			TextColor = Color.FromArgb("#888888"),
-			Padding = new Thickness(8, 6, 8, 6),
+			Padding = new Thickness(10, 6, 10, 6),
 		});
 
 		bool first = true;

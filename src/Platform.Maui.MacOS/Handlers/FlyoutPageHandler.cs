@@ -17,11 +17,21 @@ public class FlyoutContainerView : MacOSContainerView, INSSplitViewDelegate
 
     NSView? _currentFlyoutView;
     NSView? _currentDetailView;
+    bool _initialDividerSet;
 
     public Action<CGRect>? OnFlyoutLayout { get; set; }
     public Action<CGRect>? OnDetailLayout { get; set; }
 
-    public double FlyoutWidth { get; set; } = 250;
+    double _flyoutWidth = 185;
+    public double FlyoutWidth
+    {
+        get => _flyoutWidth;
+        set
+        {
+            _flyoutWidth = value;
+            _splitView.SetPositionOfDivider((nfloat)value, 0);
+        }
+    }
 
     public FlyoutContainerView()
     {
@@ -86,6 +96,12 @@ public class FlyoutContainerView : MacOSContainerView, INSSplitViewDelegate
     public override void Layout()
     {
         base.Layout();
+
+        if (!_initialDividerSet && Bounds.Width > 0)
+        {
+            _initialDividerSet = true;
+            _splitView.SetPositionOfDivider((nfloat)_flyoutWidth, 0);
+        }
 
         if (_currentFlyoutView != null)
         {
@@ -209,6 +225,7 @@ public partial class FlyoutPageHandler : MacOSViewHandler<IFlyoutView, FlyoutCon
 
     public static void MapFlyoutWidth(FlyoutPageHandler handler, IFlyoutView view)
     {
-        handler.PlatformView.FlyoutWidth = view.FlyoutWidth > 0 ? view.FlyoutWidth : 250;
+        handler.PlatformView.FlyoutWidth = view.FlyoutWidth > 0 ? view.FlyoutWidth : 185;
+        handler.PlatformView.SetFlyoutVisible(true);
     }
 }
