@@ -33,7 +33,7 @@ public partial class LabelHandler : MacOSViewHandler<ILabel, NSTextField>
         label.Selectable = false;
         label.Bordered = false;
         label.DrawsBackground = false;
-        label.TextColor = NSColor.White;
+        label.TextColor = NSColor.ControlText;
         label.MaximumNumberOfLines = 0;
         return label;
     }

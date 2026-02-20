@@ -98,7 +98,13 @@ public partial class ButtonHandler : MacOSViewHandler<IButton, NSButton>
         if (button.Background is Graphics.SolidPaint solidPaint && solidPaint.Color != null)
         {
             handler.PlatformView.WantsLayer = true;
+            handler.PlatformView.Bordered = false;
             handler.PlatformView.Layer!.BackgroundColor = solidPaint.Color.ToPlatformColor().CGColor;
+        }
+        else
+        {
+            handler.PlatformView.Bordered = true;
+            handler.PlatformView.BezelStyle = NSBezelStyle.Rounded;
         }
     }
 
