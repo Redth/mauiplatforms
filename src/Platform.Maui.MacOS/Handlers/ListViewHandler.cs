@@ -423,14 +423,24 @@ public partial class ListViewHandler : MacOSViewHandler<ListView, NSScrollView>
 
 		if (cell is SwitchCell switchCell)
 		{
-			var hStack = new HorizontalStackLayout { Padding = new Thickness(12, 8), Spacing = 10 };
+			var grid = new Grid
+			{
+				Padding = new Thickness(12, 8),
+				ColumnSpacing = 10,
+				ColumnDefinitions =
+				{
+					new ColumnDefinition(GridLength.Star),
+					new ColumnDefinition(GridLength.Auto),
+				},
+			};
 			var label = new Label { FontSize = 14, VerticalOptions = LayoutOptions.Center };
 			label.SetBinding(Label.TextProperty, new Binding(nameof(SwitchCell.Text), source: switchCell));
-			hStack.Children.Add(label);
+			grid.Children.Add(label);
 			var sw = new Switch { VerticalOptions = LayoutOptions.Center };
+			Grid.SetColumn(sw, 1);
 			sw.SetBinding(Switch.IsToggledProperty, new Binding(nameof(SwitchCell.On), source: switchCell, mode: BindingMode.TwoWay));
-			hStack.Children.Add(sw);
-			return hStack;
+			grid.Children.Add(sw);
+			return grid;
 		}
 
 		if (cell is EntryCell entryCell)

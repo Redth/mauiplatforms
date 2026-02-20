@@ -240,18 +240,27 @@ public partial class TableViewHandler : MacOSViewHandler<TableView, NSScrollView
 
 		if (cell is SwitchCell switchCell)
 		{
-			var hStack = new HorizontalStackLayout { Padding = new Thickness(12, 8), Spacing = 10 };
-			hStack.Children.Add(new Label
+			var grid = new Grid
+			{
+				Padding = new Thickness(12, 8),
+				ColumnSpacing = 10,
+				ColumnDefinitions =
+				{
+					new ColumnDefinition(GridLength.Star),
+					new ColumnDefinition(GridLength.Auto),
+				},
+			};
+			grid.Children.Add(new Label
 			{
 				Text = switchCell.Text ?? string.Empty,
 				FontSize = 14,
 				VerticalOptions = LayoutOptions.Center,
-				HorizontalOptions = LayoutOptions.Fill,
 			});
 			var sw = new Switch { IsToggled = switchCell.On, VerticalOptions = LayoutOptions.Center };
+			Grid.SetColumn(sw, 1);
 			sw.Toggled += (s, e) => switchCell.On = e.Value;
-			hStack.Children.Add(sw);
-			return hStack;
+			grid.Children.Add(sw);
+			return grid;
 		}
 
 		if (cell is EntryCell entryCell)
