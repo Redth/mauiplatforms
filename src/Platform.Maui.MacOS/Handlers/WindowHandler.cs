@@ -15,9 +15,27 @@ internal class FlippedNSView : NSView
     public FlippedNSView()
     {
         WantsLayer = true;
+        PostsFrameChangedNotifications = true;
     }
 
     public override bool IsFlipped => true;
+
+    /// The MAUI content page hosted in this container, set when MapContent runs.
+    internal WeakReference<IView>? ContentView { get; set; }
+
+    public override void SetFrameSize(CGSize newSize)
+    {
+        base.SetFrameSize(newSize);
+
+        if (newSize.Width <= 0 || newSize.Height <= 0)
+            return;
+
+        if (ContentView != null && ContentView.TryGetTarget(out var content))
+        {
+            content.Measure((double)newSize.Width, (double)newSize.Height);
+            content.Arrange(new Graphics.Rect(0, 0, (double)newSize.Width, (double)newSize.Height));
+        }
+    }
 
     public override void ViewDidChangeEffectiveAppearance()
     {
@@ -124,6 +142,7 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
             pageView.Frame = handler._contentContainer.Bounds;
             pageView.AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable;
             handler._contentContainer.AddSubview(pageView);
+            handler._contentContainer.ContentView = new WeakReference<IView>(page);
 
             // Measure and arrange the content so handlers like Shell can set up layout
             var bounds = handler._contentContainer.Bounds;
