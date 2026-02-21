@@ -105,6 +105,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 				AutohidesScrollers = true,
 				DrawsBackground = false,
 				DocumentView = _outlineView,
+				AutomaticallyAdjustsContentInsets = false,
 			};
 			_sidebarView.AddSubview(_nativeSidebarScrollView);
 		}
@@ -126,6 +127,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 				HasHorizontalScroller = false,
 				AutohidesScrollers = true,
 				DrawsBackground = false,
+				AutomaticallyAdjustsContentInsets = false,
 			};
 
 			_sidebarContent = new FlippedDocumentView();
@@ -251,14 +253,22 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			if (_sidebarEffectView != null)
 				_sidebarEffectView.Frame = _sidebarView.Bounds;
 			if (_nativeSidebarScrollView != null)
+			{
 				_nativeSidebarScrollView.Frame = _sidebarView.Bounds;
+				var safeTop = (nfloat)(_container.Superview?.SafeAreaInsets.Top ?? 0);
+				_nativeSidebarScrollView.ContentInsets = new NSEdgeInsets(safeTop, 0, 0, 0);
+			}
 		}
 		else
 		{
 			if (_sidebarEffectView != null)
 				_sidebarEffectView.Frame = _sidebarView.Bounds;
 			if (_sidebarScrollView != null)
+			{
 				_sidebarScrollView.Frame = _sidebarView.Bounds;
+				var safeTop = (nfloat)(_container.Superview?.SafeAreaInsets.Top ?? 0);
+				_sidebarScrollView.ContentInsets = new NSEdgeInsets(safeTop, 0, 0, 0);
+			}
 		}
 
 		// Divider (thin draggable strip)
