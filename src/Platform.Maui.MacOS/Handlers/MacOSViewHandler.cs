@@ -151,10 +151,89 @@ public abstract class MacOSViewHandler<TVirtualView, TPlatformView> : ViewHandle
         if (platformView.Layer == null)
             return;
 
-        if (view.Background is SolidPaint solidPaint && solidPaint.Color != null)
-            platformView.Layer.BackgroundColor = solidPaint.Color.ToPlatformColor().CGColor;
-        else if (view.Background == null)
-            platformView.Layer.BackgroundColor = null;
+        // Remove any existing gradient sublayer
+        RemoveGradientLayer(platformView);
+
+        switch (view.Background)
+        {
+            case LinearGradientPaint linear:
+                ApplyLinearGradient(platformView, linear);
+                break;
+            case RadialGradientPaint radial:
+                ApplyRadialGradient(platformView, radial);
+                break;
+            case SolidPaint solidPaint when solidPaint.Color != null:
+                platformView.Layer.BackgroundColor = solidPaint.Color.ToPlatformColor().CGColor;
+                break;
+            default:
+                platformView.Layer.BackgroundColor = null;
+                break;
+        }
+    }
+
+    const string GradientLayerName = "MauiGradientLayer";
+
+    static void RemoveGradientLayer(NSView view)
+    {
+        if (view.Layer?.Sublayers != null)
+        {
+            foreach (var sub in view.Layer.Sublayers)
+            {
+                if (sub.Name == GradientLayerName)
+                {
+                    sub.RemoveFromSuperLayer();
+                    break;
+                }
+            }
+        }
+        view.Layer!.BackgroundColor = null;
+    }
+
+    static void ApplyLinearGradient(NSView view, LinearGradientPaint paint)
+    {
+        var gradient = new CoreAnimation.CAGradientLayer
+        {
+            Name = GradientLayerName,
+            Frame = view.Layer!.Bounds,
+            StartPoint = new CGPoint(paint.StartPoint.X, paint.StartPoint.Y),
+            EndPoint = new CGPoint(paint.EndPoint.X, paint.EndPoint.Y),
+        };
+        SetGradientStops(gradient, paint.GradientStops);
+        gradient.AutoresizingMask = CoreAnimation.CAAutoresizingMask.WidthSizable
+            | CoreAnimation.CAAutoresizingMask.HeightSizable;
+        view.Layer.InsertSublayer(gradient, 0);
+    }
+
+    static void ApplyRadialGradient(NSView view, RadialGradientPaint paint)
+    {
+        var gradient = new CoreAnimation.CAGradientLayer
+        {
+            Name = GradientLayerName,
+            Frame = view.Layer!.Bounds,
+            CornerRadius = 0,
+            StartPoint = new CGPoint(paint.Center.X, paint.Center.Y),
+            EndPoint = new CGPoint(1, 1),
+        };
+        SetGradientStops(gradient, paint.GradientStops);
+        gradient.AutoresizingMask = CoreAnimation.CAAutoresizingMask.WidthSizable
+            | CoreAnimation.CAAutoresizingMask.HeightSizable;
+        view.Layer.InsertSublayer(gradient, 0);
+    }
+
+    static void SetGradientStops(CoreAnimation.CAGradientLayer gradient, PaintGradientStop[]? stops)
+    {
+        if (stops == null || stops.Length == 0)
+            return;
+
+        var colors = new CGColor[stops.Length];
+        var locations = new Foundation.NSNumber[stops.Length];
+        for (int i = 0; i < stops.Length; i++)
+        {
+            colors[i] = stops[i].Color.ToPlatformColor().CGColor;
+            locations[i] = new Foundation.NSNumber(stops[i].Offset);
+        }
+        gradient.Colors = colors;
+        gradient.Locations = locations;
     }
 
     public static new void MapFlowDirection(IViewHandler handler, IView view)

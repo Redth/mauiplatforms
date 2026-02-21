@@ -15,6 +15,7 @@ public class TabbedContainerView : MacOSContainerView
 
     public Action<nint>? OnTabSelected { get; set; }
     public Action<CGRect>? OnContentLayout { get; set; }
+    public NSSegmentedControl TabBar => _tabBar;
 
     public TabbedContainerView()
     {
@@ -204,21 +205,34 @@ public partial class TabbedPageHandler : MacOSViewHandler<ITabbedView, TabbedCon
 
     public static void MapBarBackgroundColor(TabbedPageHandler handler, ITabbedView view)
     {
-        // NSSegmentedControl uses system styling — no direct background color API
+        if (view is TabbedPage tp && tp.BarBackgroundColor is Microsoft.Maui.Graphics.Color bgColor)
+        {
+            var tabBar = handler.PlatformView.TabBar;
+            tabBar.WantsLayer = true;
+            tabBar.Layer!.BackgroundColor = bgColor.ToPlatformColor().CGColor;
+            tabBar.Layer.CornerRadius = 5;
+        }
     }
 
     public static void MapBarTextColor(TabbedPageHandler handler, ITabbedView view)
     {
-        // NSSegmentedControl uses system text styling
+        // NSSegmentedControl doesn't expose a direct text color API;
+        // text color follows system appearance on macOS.
     }
 
     public static void MapSelectedTabColor(TabbedPageHandler handler, ITabbedView view)
     {
-        // NSSegmentedControl uses system selection styling
+        if (view is TabbedPage tp && tp.SelectedTabColor is Microsoft.Maui.Graphics.Color selColor)
+        {
+            var tabBar = handler.PlatformView.TabBar;
+            tabBar.WantsLayer = true;
+            tabBar.SelectedSegmentBezelColor = selColor.ToPlatformColor();
+        }
     }
 
     public static void MapUnselectedTabColor(TabbedPageHandler handler, ITabbedView view)
     {
-        // NSSegmentedControl uses system styling for unselected segments
+        // NSSegmentedControl uses system styling for unselected segments;
+        // no per-segment unselected color API is available in AppKit.
     }
 }

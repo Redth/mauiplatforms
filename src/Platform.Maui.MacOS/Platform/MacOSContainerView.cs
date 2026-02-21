@@ -57,6 +57,11 @@ public class MacOSContainerView : NSView
             if (Bounds.Contains(local))
                 return this;
         }
+
+        // Check if this view itself is InputTransparent — pass through to views behind
+        if (View is IView v && v.InputTransparent)
+            return null;
+
         return base.HitTest(point);
     }
 

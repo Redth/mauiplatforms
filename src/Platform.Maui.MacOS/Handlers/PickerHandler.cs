@@ -104,7 +104,19 @@ public partial class PickerHandler : MacOSViewHandler<IPicker, NSPopUpButton>
 
     public static void MapTitleColor(PickerHandler handler, IPicker picker)
     {
-        // Title color is managed through the NSPopUpButton's appearance
+        if (picker.TitleColor == null || picker.Title == null)
+            return;
+
+        // Apply TitleColor to the placeholder item (index 0) via attributed title
+        var menu = handler.PlatformView.Menu;
+        if (menu != null && menu.Count > 0)
+        {
+            var item = menu.ItemAt(0);
+            var attrs = new Foundation.NSDictionary(
+                AppKit.NSStringAttributeKey.ForegroundColor,
+                picker.TitleColor.ToPlatformColor());
+            item.AttributedTitle = new Foundation.NSAttributedString(picker.Title, attrs);
+        }
     }
 
     public static void MapSelectedIndex(PickerHandler handler, IPicker picker)
