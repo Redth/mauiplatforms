@@ -23,6 +23,10 @@ public partial class PickerHandler : MacOSViewHandler<IPicker, NSPopUpButton>
     protected override NSPopUpButton CreatePlatformView()
     {
         var popup = new NSPopUpButton(new CoreGraphics.CGRect(0, 0, 200, 25), false);
+        popup.AutoresizesSubviews = true;
+        // Ensure the popup has a menu
+        if (popup.Menu == null)
+            popup.Menu = new NSMenu();
         return popup;
     }
 
@@ -30,7 +34,6 @@ public partial class PickerHandler : MacOSViewHandler<IPicker, NSPopUpButton>
     {
         base.ConnectHandler(platformView);
         platformView.Activated += OnActivated;
-        // Ensure items are populated on connect (Items.Add() may not trigger property change)
         RebuildItems();
     }
 
@@ -59,22 +62,23 @@ public partial class PickerHandler : MacOSViewHandler<IPicker, NSPopUpButton>
         if (VirtualView == null)
             return;
 
-        PlatformView.RemoveAllItems();
+        // Clear existing items via menu
+        var menu = PlatformView.Menu;
+        if (menu == null)
+        {
+            menu = new NSMenu();
+            PlatformView.Menu = menu;
+        }
+        menu.RemoveAllItems();
 
         // Add placeholder title if present
         if (VirtualView.Title != null)
-            PlatformView.AddItem(VirtualView.Title);
+            menu.AddItem(new NSMenuItem(VirtualView.Title));
 
-        // Use GetCount/GetItem for reliable access (IPicker may not expose Items directly)
-        var count = VirtualView.GetCount();
-        for (int i = 0; i < count; i++)
-            PlatformView.AddItem(VirtualView.GetItem(i));
-
-        // Fallback to Items collection if GetCount returned 0
-        if (count == 0)
+        if (VirtualView.Items != null)
         {
-            foreach (var item in VirtualView.Items)
-                PlatformView.AddItem(item);
+            for (int i = 0; i < VirtualView.Items.Count; i++)
+                menu.AddItem(new NSMenuItem(VirtualView.Items[i] ?? ""));
         }
 
         UpdateSelection();
