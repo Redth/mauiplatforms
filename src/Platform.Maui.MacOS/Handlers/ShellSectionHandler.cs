@@ -40,17 +40,23 @@ public partial class ShellSectionHandler : ElementHandler<ShellSection, NSView>
 	{
 		if (arg is NavigationRequest request)
 		{
-			// Dispatch to main thread — GoToAsync may be called from background threads
-			// and NavigationFinished triggers view creation in the Shell pipeline.
-			if (!NSThread.IsMain)
-			{
-				NSApplication.SharedApplication.InvokeOnMainThread(() =>
-					((IStackNavigation)view).NavigationFinished(request.NavigationStack));
-			}
-			else
+			void Complete()
 			{
 				((IStackNavigation)view).NavigationFinished(request.NavigationStack);
+
+				// Tell ShellHandler to show the correct page from the navigation stack
+				if (handler.VirtualView is Element element)
+				{
+					var shell = element.FindParentOfType<Shell>();
+					if (shell?.Handler is ShellHandler shellHandler)
+						shellHandler.ShowCurrentPage();
+				}
 			}
+
+			if (!NSThread.IsMain)
+				NSApplication.SharedApplication.InvokeOnMainThread(Complete);
+			else
+				Complete();
 		}
 	}
 }

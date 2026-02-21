@@ -25,6 +25,7 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
     Page? _currentPage;
     FlyoutPage? _flyoutPage;
     NavigationPage? _navigationPage;
+    Shell? _shell;
 
     public void AttachToWindow(NSWindow window)
     {
@@ -52,6 +53,7 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
         // Walk up the page hierarchy to find FlyoutPage and NavigationPage
         _flyoutPage = FindAncestor<FlyoutPage>(page);
         _navigationPage = FindAncestor<NavigationPage>(page);
+        _shell = FindShell(page);
 
         // Update the window title from the current page
         if (_window != null && page != null)
@@ -80,6 +82,26 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
         return null;
     }
 
+    static Shell? FindShell(Page? page)
+    {
+        Element? element = page;
+        while (element != null)
+        {
+            if (element is Shell shell)
+                return shell;
+            element = element.Parent;
+        }
+        // Pushed pages may not have a parent chain to Shell yet.
+        // Fall back to checking the Window's root page.
+        try
+        {
+            if (page?.Window?.Page is Shell windowShell)
+                return windowShell;
+        }
+        catch { }
+        return null;
+    }
+
     void OnToolbarItemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (_currentPage != null)
@@ -94,24 +116,39 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
 
     bool ShouldShowBackButton()
     {
-        if (_navigationPage == null)
-            return false;
-        if (_navigationPage.Navigation.NavigationStack.Count <= 1)
-            return false;
         // Respect HasNavigationBar on the current page
         if (_currentPage != null && !NavigationPage.GetHasNavigationBar(_currentPage))
             return false;
-        return true;
+
+        if (_navigationPage != null)
+            return _navigationPage.Navigation.NavigationStack.Count > 1;
+
+        // Shell: check ShellSection's navigation stack
+        if (_shell?.CurrentItem?.CurrentItem is ShellSection section)
+        {
+            var navStack = section.Navigation?.NavigationStack;
+            if (navStack != null && navStack.Count > 1)
+                return true;
+        }
+
+        return false;
     }
 
     string? GetBackButtonTitle()
     {
-        if (_navigationPage == null)
+        IReadOnlyList<Page>? stack = null;
+
+        if (_navigationPage != null)
+            stack = _navigationPage.Navigation.NavigationStack;
+        else if (_shell?.CurrentItem?.CurrentItem is ShellSection section)
+            stack = section.Navigation?.NavigationStack;
+
+        if (stack == null || stack.Count <= 1)
             return null;
-        var stack = _navigationPage.Navigation.NavigationStack;
-        if (stack.Count <= 1)
-            return null;
+
         var previousPage = stack[stack.Count - 2];
+        if (previousPage == null)
+            return "Back";
         var backTitle = NavigationPage.GetBackButtonTitle(previousPage);
         if (string.IsNullOrEmpty(backTitle))
             backTitle = previousPage.Title;
@@ -301,8 +338,13 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
     [Export("toolbarAllowedItemIdentifiers:")]
     public string[] ToolbarAllowedItemIdentifiers(NSToolbar toolbar)
     {
-        var ids = new List<string>(_itemIdentifiers) { FlexibleSpaceId };
-        return ids.ToArray();
+        // Always include all possible identifiers so NSToolbar doesn't reject
+        // items added later (e.g., back button appearing after a push navigation)
+        var ids = new List<string>(_itemIdentifiers)
+        {
+            FlexibleSpaceId, BackButtonId, SidebarToggleId, TitleId,
+        };
+        return ids.Distinct().ToArray();
     }
 
     [Export("toolbarDefaultItemIdentifiers:")]
@@ -339,7 +381,18 @@ public class MacOSToolbarManager : NSObject, INSToolbarDelegate
     void OnBackButtonClicked(NSObject sender)
     {
         if (_navigationPage != null && _navigationPage.Navigation.NavigationStack.Count > 1)
+        {
             _navigationPage.PopAsync();
+            return;
+        }
+
+        // Shell: pop via ShellSection navigation
+        if (_shell?.CurrentItem?.CurrentItem is ShellSection section)
+        {
+            var navStack = section.Navigation?.NavigationStack;
+            if (navStack != null && navStack.Count > 1)
+                section.Navigation.PopAsync();
+        }
     }
 
     public void Detach()

@@ -190,6 +190,11 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
     {
         switch (view)
         {
+            case Shell shell:
+                shell.Navigated += OnShellNavigated;
+                _subscriptions.Add((shell, "Navigated"));
+                break;
+
             case TabbedPage tabbed:
                 tabbed.CurrentPageChanged += OnCurrentPageChanged;
                 _subscriptions.Add((tabbed, nameof(TabbedPage.CurrentPageChanged)));
@@ -218,6 +223,9 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
         {
             switch (source)
             {
+                case Shell shell:
+                    shell.Navigated -= OnShellNavigated;
+                    break;
                 case TabbedPage tabbed:
                     tabbed.CurrentPageChanged -= OnCurrentPageChanged;
                     break;
@@ -249,6 +257,14 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
         RefreshToolbar();
     }
 
+    void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+    {
+        // Shell navigation (GoToAsync, push, pop, sidebar) — refresh toolbar
+        if (_observedContent != null)
+            ObservePageChanges(_observedContent);
+        RefreshToolbar();
+    }
+
     void OnFlyoutPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(FlyoutPage.Detail))
@@ -259,7 +275,7 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
         }
     }
 
-    void RefreshToolbar()
+    internal void RefreshToolbar()
     {
         if (_toolbarManager == null || _observedContent == null)
             return;
@@ -275,6 +291,7 @@ public partial class WindowHandler : ElementHandler<IWindow, NSWindow>
     {
         return view switch
         {
+            Shell shell => shell.CurrentPage,
             FlyoutPage flyout => FindCurrentPage((IView?)flyout.Detail),
             TabbedPage tabbed => FindCurrentPage((IView?)tabbed.CurrentPage),
             NavigationPage nav => FindCurrentPage((IView?)nav.CurrentPage),

@@ -539,7 +539,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		_sidebarContent!.AddSubview(itemView);
 	}
 
-	void ShowCurrentPage()
+	internal void ShowCurrentPage()
 	{
 		// Must run on main thread — AppKit view creation/manipulation
 		// crashes with SIGSEGV when called from background threads
@@ -561,30 +561,42 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			_currentPage = null;
 		}
 
-		// Get the current page from Shell via IShellContentController
+		Page? page = null;
+
+		// Check if there are pushed pages on the ShellSection navigation stack
 		var currentItem = _shell.CurrentItem;
-		if (currentItem?.CurrentItem?.CurrentItem is ShellContent shellContent &&
+		if (currentItem?.CurrentItem is ShellSection section)
+		{
+			var navStack = section.Navigation?.NavigationStack;
+			if (navStack != null && navStack.Count > 1)
+			{
+				// Show the topmost pushed page
+				page = navStack[^1];
+			}
+		}
+
+		// Fall back to root content from ShellContent
+		if (page == null &&
+			currentItem?.CurrentItem?.CurrentItem is ShellContent shellContent &&
 			shellContent is IShellContentController controller)
 		{
-			// GetOrCreateContent creates from ContentTemplate if needed
-			// and caches via ContentCache (also sets up Shell.CurrentPage)
-			var page = controller.GetOrCreateContent();
+			page = controller.GetOrCreateContent();
+		}
 
-			if (page != null)
+		if (page != null)
+		{
+			_currentPage = page;
+			var platformView = ((IView)page).ToMacOSPlatform(MauiContext);
+			platformView.Frame = _contentView.Bounds;
+			_contentView.AddSubview(platformView);
+			_currentPageView = platformView;
+
+			// Measure and arrange
+			var bounds = _contentView.Bounds;
+			if (bounds.Width > 0 && bounds.Height > 0)
 			{
-				_currentPage = page;
-				var platformView = ((IView)page).ToMacOSPlatform(MauiContext);
-				platformView.Frame = _contentView.Bounds;
-				_contentView.AddSubview(platformView);
-				_currentPageView = platformView;
-
-				// Measure and arrange
-				var bounds = _contentView.Bounds;
-				if (bounds.Width > 0 && bounds.Height > 0)
-				{
-					page.Measure((double)bounds.Width, (double)bounds.Height);
-					page.Arrange(new Rect(0, 0, (double)bounds.Width, (double)bounds.Height));
-				}
+				page.Measure((double)bounds.Width, (double)bounds.Height);
+				page.Arrange(new Rect(0, 0, (double)bounds.Width, (double)bounds.Height));
 			}
 		}
 
@@ -593,6 +605,17 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			SelectCurrentItemInOutlineView();
 		else
 			BuildCustomSidebar();
+
+		// Notify WindowHandler to refresh toolbar (back button, title, toolbar items)
+		NotifyToolbarRefresh();
+	}
+
+	void NotifyToolbarRefresh()
+	{
+		if (_shell?.Window?.Handler is WindowHandler windowHandler)
+		{
+			windowHandler.RefreshToolbar();
+		}
 	}
 
 	// Property mappers
