@@ -30,6 +30,9 @@
         <ProjectReference Include="..\..\..\MauiDevFlow\src\MauiDevFlow.Blazor\MauiDevFlow.Blazor.csproj" />
     </ItemGroup>
 
+    <!-- Import MauiDevFlow build targets (normally comes from NuGet package) -->
+    <Import Project="..\..\..\MauiDevFlow\src\MauiDevFlow.Agent\build\Redth.MauiDevFlow.Agent.targets" />
+
     <ItemGroup>
         <Compile Include="..\Sample\Platforms\macOS\App.cs">
             <Link>App.cs</Link>
