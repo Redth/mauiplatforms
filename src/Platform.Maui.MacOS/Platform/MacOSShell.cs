@@ -22,4 +22,21 @@ public static class MacOSShell
 
 	public static void SetUseNativeSidebar(BindableObject obj, bool value)
 		=> obj.SetValue(UseNativeSidebarProperty, value);
+
+	/// <summary>
+	/// SF Symbol name for a Shell item's sidebar icon (e.g. "house.fill", "gear").
+	/// Can be set on ShellContent, ShellSection, or FlyoutItem.
+	/// </summary>
+	public static readonly BindableProperty SystemImageProperty =
+		BindableProperty.CreateAttached(
+			"SystemImage",
+			typeof(string),
+			typeof(MacOSShell),
+			null);
+
+	public static string? GetSystemImage(BindableObject obj)
+		=> (string?)obj.GetValue(SystemImageProperty);
+
+	public static void SetSystemImage(BindableObject obj, string? value)
+		=> obj.SetValue(SystemImageProperty, value);
 }

@@ -344,7 +344,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 							var child = new MacOSSidebarItem
 							{
 								Title = content.Title ?? shellSection.Title ?? item.Title ?? "Page",
-								SystemImage = GetSystemImageName(content.Icon ?? shellSection.Icon ?? item.Icon),
+								SystemImage = GetSystemImageForContent(content, shellSection, item),
 							};
 							group.Children.Add(child);
 							_itemNavMap[child] = (item, shellSection, content);
@@ -366,7 +366,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 							var leaf = new MacOSSidebarItem
 							{
 								Title = content.Title ?? shellSection.Title ?? item.Title ?? "Page",
-								SystemImage = GetSystemImageName(content.Icon ?? shellSection.Icon ?? item.Icon),
+								SystemImage = GetSystemImageForContent(content, shellSection, item),
 							};
 							sidebarItems.Add(leaf);
 							_itemNavMap[leaf] = (item, shellSection, content);
@@ -443,22 +443,22 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		}
 	}
 
-	static string? GetSystemImageName(ImageSource? icon)
+	/// <summary>
+	/// Gets the SF Symbol name for a Shell content item, checking attached properties
+	/// on content → section → item in priority order.
+	/// </summary>
+	static string? GetSystemImageForContent(ShellContent content, ShellSection section, ShellItem item)
 	{
-		// Try to extract a meaningful SF Symbol name from the icon
-		if (icon is FileImageSource fileIcon)
-		{
-			var name = fileIcon.File;
-			// Common MAUI icon names that map to SF Symbols
-			return name?.ToLowerInvariant() switch
-			{
-				"home" or "home.png" => "house.fill",
-				"settings" or "settings.png" => "gear",
-				"star" or "star.png" => "star.fill",
-				"info" or "info.png" => "info.circle",
-				_ => null,
-			};
-		}
+		// Check MacOSShell.SystemImage attached property (content → section → item)
+		var image = MacOSShell.GetSystemImage(content);
+		if (!string.IsNullOrEmpty(image)) return image;
+
+		image = MacOSShell.GetSystemImage(section);
+		if (!string.IsNullOrEmpty(image)) return image;
+
+		image = MacOSShell.GetSystemImage(item);
+		if (!string.IsNullOrEmpty(image)) return image;
+
 		return null;
 	}
 

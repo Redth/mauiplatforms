@@ -31,49 +31,61 @@ class MainShell : Shell
 
 		// General
 		var general = new FlyoutItem { Title = "General" };
-		general.Items.Add(new ShellContent { Title = "Home", Route = "home", ContentTemplate = new DataTemplate(typeof(HomePage)) });
-		general.Items.Add(new ShellContent { Title = "Controls", Route = "controls", ContentTemplate = new DataTemplate(typeof(ControlsPage)) });
-		general.Items.Add(new ShellContent { Title = "Pickers & Search", Route = "pickers", ContentTemplate = new DataTemplate(typeof(PickersPage)) });
-		general.Items.Add(new ShellContent { Title = "Fonts", Route = "fonts", ContentTemplate = new DataTemplate(typeof(FontsPage)) });
-		general.Items.Add(new ShellContent { Title = "Layouts", Route = "layouts", ContentTemplate = new DataTemplate(typeof(LayoutsPage)) });
-		general.Items.Add(new ShellContent { Title = "Alerts & Dialogs", Route = "alerts", ContentTemplate = new DataTemplate(typeof(AlertsPage)) });
+		general.Items.Add(MakeContent("Home", "home", "house.fill", typeof(HomePage)));
+		general.Items.Add(MakeContent("Controls", "controls", "slider.horizontal.3", typeof(ControlsPage)));
+		general.Items.Add(MakeContent("Pickers & Search", "pickers", "calendar", typeof(PickersPage)));
+		general.Items.Add(MakeContent("Fonts", "fonts", "textformat", typeof(FontsPage)));
+		general.Items.Add(MakeContent("Layouts", "layouts", "rectangle.3.group", typeof(LayoutsPage)));
+		general.Items.Add(MakeContent("Alerts & Dialogs", "alerts", "bubble.left.and.bubble.right", typeof(AlertsPage)));
 		Items.Add(general);
 
 		// Lists & Collections
 		var lists = new FlyoutItem { Title = "Lists & Collections" };
-		lists.Items.Add(new ShellContent { Title = "Collection View", Route = "collectionview", ContentTemplate = new DataTemplate(typeof(CollectionViewShellPage)) });
-		lists.Items.Add(new ShellContent { Title = "CarouselView", Route = "carouselview", ContentTemplate = new DataTemplate(typeof(CarouselViewPage)) });
-		lists.Items.Add(new ShellContent { Title = "ListView", Route = "listview", ContentTemplate = new DataTemplate(typeof(ListViewPage)) });
-		lists.Items.Add(new ShellContent { Title = "TableView", Route = "tableview", ContentTemplate = new DataTemplate(typeof(TableViewPage)) });
+		lists.Items.Add(MakeContent("Collection View", "collectionview", "square.grid.2x2", typeof(CollectionViewShellPage)));
+		lists.Items.Add(MakeContent("CarouselView", "carouselview", "rectangle.stack", typeof(CarouselViewPage)));
+		lists.Items.Add(MakeContent("ListView", "listview", "list.bullet", typeof(ListViewPage)));
+		lists.Items.Add(MakeContent("TableView", "tableview", "tablecells", typeof(TableViewPage)));
 		Items.Add(lists);
 
 		// Drawing & Visual
 		var drawing = new FlyoutItem { Title = "Drawing & Visual" };
-		drawing.Items.Add(new ShellContent { Title = "Graphics", Route = "graphics", ContentTemplate = new DataTemplate(typeof(GraphicsPage)) });
-		drawing.Items.Add(new ShellContent { Title = "Gestures", Route = "gestures", ContentTemplate = new DataTemplate(typeof(GesturesPage)) });
-		drawing.Items.Add(new ShellContent { Title = "Shapes", Route = "shapes", ContentTemplate = new DataTemplate(typeof(ShapesPage)) });
-		drawing.Items.Add(new ShellContent { Title = "Transforms", Route = "transforms", ContentTemplate = new DataTemplate(typeof(TransformsPage)) });
+		drawing.Items.Add(MakeContent("Graphics", "graphics", "paintbrush", typeof(GraphicsPage)));
+		drawing.Items.Add(MakeContent("Gestures", "gestures", "hand.tap", typeof(GesturesPage)));
+		drawing.Items.Add(MakeContent("Shapes", "shapes", "star", typeof(ShapesPage)));
+		drawing.Items.Add(MakeContent("Transforms", "transforms", "arrow.triangle.2.circlepath", typeof(TransformsPage)));
 		Items.Add(drawing);
 
 		// Platform
 		var platform = new FlyoutItem { Title = "Platform" };
-		platform.Items.Add(new ShellContent { Title = "WebView", Route = "webview", ContentTemplate = new DataTemplate(typeof(WebViewPage)) });
-		platform.Items.Add(new ShellContent { Title = "Device & App Info", Route = "deviceinfo", ContentTemplate = new DataTemplate(typeof(DeviceInfoPage)) });
-		platform.Items.Add(new ShellContent { Title = "Battery & Network", Route = "battery", ContentTemplate = new DataTemplate(typeof(BatteryNetworkPage)) });
-		platform.Items.Add(new ShellContent { Title = "Clipboard & Storage", Route = "clipboard", ContentTemplate = new DataTemplate(typeof(ClipboardPrefsPage)) });
-		platform.Items.Add(new ShellContent { Title = "Launch & Share", Route = "launch", ContentTemplate = new DataTemplate(typeof(LaunchSharePage)) });
+		platform.Items.Add(MakeContent("WebView", "webview", "globe", typeof(WebViewPage)));
+		platform.Items.Add(MakeContent("Device & App Info", "deviceinfo", "iphone", typeof(DeviceInfoPage)));
+		platform.Items.Add(MakeContent("Battery & Network", "battery", "battery.100", typeof(BatteryNetworkPage)));
+		platform.Items.Add(MakeContent("Clipboard & Storage", "clipboard", "doc.on.clipboard", typeof(ClipboardPrefsPage)));
+		platform.Items.Add(MakeContent("Launch & Share", "launch", "square.and.arrow.up", typeof(LaunchSharePage)));
 #if MACAPP
-		platform.Items.Add(new ShellContent { Title = "Blazor Hybrid", Route = "blazor", ContentTemplate = new DataTemplate(typeof(BlazorPage)) });
+		platform.Items.Add(MakeContent("Blazor Hybrid", "blazor", "network", typeof(BlazorPage)));
 #endif
 		Items.Add(platform);
 
 		// Navigation
 		var navigation = new FlyoutItem { Title = "Navigation" };
-		navigation.Items.Add(new ShellContent { Title = "Navigation Demo", Route = "navigation", ContentTemplate = new DataTemplate(typeof(NavigationDemoPage)) });
-		navigation.Items.Add(new ShellContent { Title = "TabbedPage", Route = "tabbedpage", ContentTemplate = new DataTemplate(typeof(TabbedPageDemoShellPage)) });
-		navigation.Items.Add(new ShellContent { Title = "FlyoutPage", Route = "flyoutpage", ContentTemplate = new DataTemplate(typeof(FlyoutPageDemoShellPage)) });
-		navigation.Items.Add(new ShellContent { Title = "Map", Route = "map", ContentTemplate = new DataTemplate(typeof(MapPage)) });
+		navigation.Items.Add(MakeContent("Navigation Demo", "navigation", "arrow.triangle.turn.up.right.diamond", typeof(NavigationDemoPage)));
+		navigation.Items.Add(MakeContent("TabbedPage", "tabbedpage", "rectangle.split.3x1", typeof(TabbedPageDemoShellPage)));
+		navigation.Items.Add(MakeContent("FlyoutPage", "flyoutpage", "sidebar.left", typeof(FlyoutPageDemoShellPage)));
+		navigation.Items.Add(MakeContent("Map", "map", "map", typeof(MapPage)));
 		Items.Add(navigation);
+	}
+
+	static ShellContent MakeContent(string title, string route, string systemImage, Type pageType)
+	{
+		var content = new ShellContent
+		{
+			Title = title,
+			Route = route,
+			ContentTemplate = new DataTemplate(pageType),
+		};
+		MacOSShell.SetSystemImage(content, systemImage);
+		return content;
 	}
 }
 
