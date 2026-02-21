@@ -236,6 +236,15 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		}
 	}
 
+	nfloat GetTitlebarHeight()
+	{
+		// The traffic light buttons (close/minimize/maximize) need ~28px clearance.
+		// SafeAreaInsets.Top and ContentLayoutRect both return the full unified
+		// toolbar height (52px) which is too much when TitlebarAppearsTransparent
+		// is set and TitleVisibility is hidden.
+		return 28;
+	}
+
 	public override void PlatformArrange(Rect rect)
 	{
 		base.PlatformArrange(rect);
@@ -255,7 +264,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			if (_nativeSidebarScrollView != null)
 			{
 				_nativeSidebarScrollView.Frame = _sidebarView.Bounds;
-				var safeTop = (nfloat)(_container.Superview?.SafeAreaInsets.Top ?? 0);
+				var safeTop = GetTitlebarHeight();
 				_nativeSidebarScrollView.ContentInsets = new NSEdgeInsets(safeTop, 0, 0, 0);
 			}
 		}
@@ -266,7 +275,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			if (_sidebarScrollView != null)
 			{
 				_sidebarScrollView.Frame = _sidebarView.Bounds;
-				var safeTop = (nfloat)(_container.Superview?.SafeAreaInsets.Top ?? 0);
+				var safeTop = GetTitlebarHeight();
 				_sidebarScrollView.ContentInsets = new NSEdgeInsets(safeTop, 0, 0, 0);
 			}
 		}
