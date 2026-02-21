@@ -110,8 +110,15 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		}
 		else
 		{
-			// Custom sidebar with MAUI-drawn items
-			_sidebarView.Layer!.BackgroundColor = NSColor.UnderPageBackground.CGColor;
+			// Custom sidebar with MAUI-drawn items — use NSVisualEffectView
+			// for proper behind-window blending that extends under the titlebar
+			_sidebarEffectView = new NSVisualEffectView
+			{
+				BlendingMode = NSVisualEffectBlendingMode.BehindWindow,
+				Material = NSVisualEffectMaterial.Sidebar,
+				State = NSVisualEffectState.Active,
+			};
+			_sidebarView.AddSubview(_sidebarEffectView);
 
 			_sidebarScrollView = new NSScrollView
 			{
@@ -248,6 +255,8 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		}
 		else
 		{
+			if (_sidebarEffectView != null)
+				_sidebarEffectView.Frame = _sidebarView.Bounds;
 			if (_sidebarScrollView != null)
 				_sidebarScrollView.Frame = _sidebarView.Bounds;
 		}
