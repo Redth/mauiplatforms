@@ -39,4 +39,21 @@ public static class MacOSShell
 
 	public static void SetSystemImage(BindableObject obj, string? value)
 		=> obj.SetValue(SystemImageProperty, value);
+
+	/// <summary>
+	/// When true, the sidebar can be resized by dragging the divider between
+	/// the sidebar and content area. Defaults to true.
+	/// </summary>
+	public static readonly BindableProperty IsSidebarResizableProperty =
+		BindableProperty.CreateAttached(
+			"IsSidebarResizable",
+			typeof(bool),
+			typeof(MacOSShell),
+			true);
+
+	public static bool GetIsSidebarResizable(BindableObject obj)
+		=> (bool)obj.GetValue(IsSidebarResizableProperty);
+
+	public static void SetIsSidebarResizable(BindableObject obj, bool value)
+		=> obj.SetValue(IsSidebarResizableProperty, value);
 }

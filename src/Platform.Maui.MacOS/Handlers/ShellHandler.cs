@@ -37,6 +37,7 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 	NSView? _sidebarView;
 	NSView? _contentView;
 	NSView? _currentPageView;
+	DividerView? _dividerView;
 	Page? _currentPage;
 	Shell? _shell;
 	nfloat _flyoutWidth = 220;
@@ -130,8 +131,12 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 		_contentView.WantsLayer = true;
 		_contentView.Layer!.MasksToBounds = true;
 
+		// Draggable divider between sidebar and content
+		_dividerView = new DividerView(this);
+
 		_container.AddSubview(_sidebarView);
 		_container.AddSubview(_contentView);
+		_container.AddSubview(_dividerView);
 
 		return _container;
 	}
@@ -250,7 +255,12 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 				_sidebarScrollView.Frame = _sidebarView.Bounds;
 		}
 
-		var contentX = sidebarWidth + 1; // 1px divider
+		// Divider (thin draggable strip)
+		const double dividerWidth = 5;
+		if (_dividerView != null)
+			_dividerView.Frame = new CGRect(sidebarWidth - 2, 0, dividerWidth, rect.Height);
+
+		var contentX = sidebarWidth + 1;
 		var contentWidth = rect.Width - contentX;
 		_contentView.Frame = new CGRect(contentX, 0, contentWidth, rect.Height);
 
@@ -757,6 +767,81 @@ public partial class ShellHandler : ViewHandler<Shell, NSView>
 			base.MouseExited(theEvent);
 			if (!_isSelected)
 				Layer!.BackgroundColor = NSColor.Clear.CGColor;
+		}
+	}
+
+	/// <summary>
+	/// A draggable divider between the sidebar and content area.
+	/// Shows a resize cursor on hover and resizes the sidebar on drag.
+	/// </summary>
+	class DividerView : NSView
+	{
+		readonly ShellHandler _handler;
+		nfloat _dragStartX;
+		nfloat _dragStartWidth;
+		bool _isDragging;
+		NSTrackingArea? _trackingArea;
+
+		static readonly nfloat MinWidth = 150;
+		static readonly nfloat MaxWidth = 400;
+
+		public DividerView(ShellHandler handler)
+		{
+			_handler = handler;
+		}
+
+		bool IsResizable => _handler._shell is Shell shell && MacOSShell.GetIsSidebarResizable(shell);
+
+		public override void ResetCursorRects()
+		{
+			base.ResetCursorRects();
+			if (IsResizable)
+				AddCursorRect(Bounds, NSCursor.ResizeLeftRightCursor);
+		}
+
+		public override void MouseDown(NSEvent theEvent)
+		{
+			if (!IsResizable) { base.MouseDown(theEvent); return; }
+
+			_isDragging = true;
+			var loc = theEvent.LocationInWindow;
+			_dragStartX = loc.X;
+			_dragStartWidth = _handler._flyoutWidth;
+		}
+
+		public override void MouseDragged(NSEvent theEvent)
+		{
+			if (!_isDragging || !IsResizable) return;
+
+			var loc = theEvent.LocationInWindow;
+			var delta = loc.X - _dragStartX;
+			var newWidth = (nfloat)Math.Clamp((double)(_dragStartWidth + delta), (double)MinWidth, (double)MaxWidth);
+
+			_handler._flyoutWidth = newWidth;
+
+			var containerFrame = _handler._container?.Frame ?? CGRect.Empty;
+			if (containerFrame.Width > 0 && containerFrame.Height > 0)
+			{
+				_handler.PlatformArrange(new Rect(0, 0, containerFrame.Width, containerFrame.Height));
+			}
+		}
+
+		public override void MouseUp(NSEvent theEvent)
+		{
+			_isDragging = false;
+		}
+
+		public override void UpdateTrackingAreas()
+		{
+			base.UpdateTrackingAreas();
+			if (_trackingArea != null)
+				RemoveTrackingArea(_trackingArea);
+
+			_trackingArea = new NSTrackingArea(
+				Bounds,
+				NSTrackingAreaOptions.MouseEnteredAndExited | NSTrackingAreaOptions.ActiveInKeyWindow | NSTrackingAreaOptions.CursorUpdate,
+				this, null);
+			AddTrackingArea(_trackingArea);
 		}
 	}
 }
